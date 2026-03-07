@@ -1,14 +1,31 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import CategoryStrip from "@/components/CategoryStrip";
+import DestinationsGrid from "@/components/DestinationsGrid";
+import ToursSection from "@/components/ToursSection";
+import GuidesGrid from "@/components/GuidesGrid";
+import AffiliateServices from "@/components/AffiliateServices";
+import ThematicPackages from "@/components/ThematicPackages";
+import CommunityChat from "@/components/CommunityChat";
+import AIAssistant from "@/components/AIAssistant";
+import Newsletter from "@/components/Newsletter";
+import Footer from "@/components/Footer";
 
-const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
-};
+const Index = () => (
+  <div className="min-h-screen bg-background">
+    <Navbar />
+    <HeroSection />
+    <CategoryStrip />
+    <DestinationsGrid />
+    <ToursSection />
+    <GuidesGrid />
+    <AffiliateServices />
+    <ThematicPackages />
+    <CommunityChat />
+    <Newsletter />
+    <Footer />
+    <AIAssistant />
+  </div>
+);
 
 export default Index;
