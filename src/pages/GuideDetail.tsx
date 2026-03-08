@@ -146,16 +146,9 @@ const GuideDetail = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
-                <div className="text-center">
-                  <span className="text-5xl block mb-3">{guide.avatar}</span>
-                  <p className="text-3xl font-heading font-bold text-forest">{guide.priceLabel}</p>
-                </div>
-                <button onClick={() => setBooking(true)} className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
-                  Rezervo Guidën
-                </button>
-                <p className="text-xs text-center text-muted-foreground">Flexible cancellation policy</p>
-              </div>
+              <BookingWidget
+                item={{ id: id!, type: "guide", name: guide.name, price: guide.price, priceLabel: guide.priceLabel, emoji: guide.avatar }}
+              />
             </div>
           </div>
         </div>
