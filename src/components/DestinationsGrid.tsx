@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import BookingModal from "./BookingModal";
 
 interface Destination {
   emoji: string;
