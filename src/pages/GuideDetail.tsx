@@ -72,7 +72,6 @@ const guidesData: Record<string, {
 const GuideDetail = () => {
   const { id } = useParams<{ id: string }>();
   const guide = id ? guidesData[id] : null;
-  const [booking, setBooking] = useState(false);
 
   if (!guide) {
     return (
