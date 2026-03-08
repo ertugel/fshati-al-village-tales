@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut } from "lucide-react";
+import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut, CalendarDays } from "lucide-react";
 
 const navLinks = [
   { label: "Destinacione", href: "#destinations" },
@@ -57,6 +57,9 @@ const Navbar = () => {
 
           {user ? (
             <div className="flex items-center gap-2">
+              <a href="/my-bookings" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
+                <CalendarDays className="h-3.5 w-3.5" /> Rezervimet
+              </a>
               {hasRole("owner") && (
                 <a href="/dashboard" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
                   <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
@@ -118,6 +121,9 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
+              <a href="/my-bookings" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
+                📅 Rezervimet
+              </a>
               {hasRole("owner") && (
                 <a href="/dashboard" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
                   🏠 Dashboard
