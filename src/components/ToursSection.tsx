@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import BookingModal from "./BookingModal";
-import ReviewSection from "./ReviewSection";
 
 interface Tour {
   emoji: string;
@@ -124,11 +124,16 @@ const ToursSection = () => {
                     Rezervo
                   </button>
                 </div>
-                <ReviewSection itemId={tour.title} itemType="tour" itemName={tour.title} />
               </div>
             ))}
           </motion.div>
         </AnimatePresence>
+
+        <div className="text-center mt-10">
+          <Link to="/tours" className="inline-block rounded-full bg-forest px-8 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
+            Shiko të gjitha turnet →
+          </Link>
+        </div>
       </div>
 
       {booking && (

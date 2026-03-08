@@ -1,15 +1,30 @@
+import { Link } from "react-router-dom";
+
 const columns = [
   {
     title: "Discover",
-    links: ["Destinations", "Day Tours", "Multi-Day Tours", "Local Guides", "Thematic Packages"],
+    links: [
+      { label: "Destinations", href: "/destinations" },
+      { label: "Day Tours", href: "/tours" },
+      { label: "Local Guides", href: "/guides" },
+      { label: "Thematic Packages", href: "/home#packages" },
+    ],
   },
   {
     title: "Services",
-    links: ["Car Rental", "eSIM & Internet", "Travel Insurance", "Airport Transfer", "Custom Itinerary"],
+    links: [
+      { label: "Car Rental", href: "/services" },
+      { label: "eSIM & Internet", href: "/services" },
+      { label: "Travel Insurance", href: "/services" },
+      { label: "Airport Transfer", href: "/services" },
+    ],
   },
   {
     title: "About",
-    links: ["Our Story", "Blog", "Careers", "Press", "Contact Us"],
+    links: [
+      { label: "Our Story", href: "/about" },
+      { label: "Contact Us", href: "/contact" },
+    ],
   },
 ];
 
@@ -17,14 +32,13 @@ const Footer = () => (
   <footer className="bg-forest text-cream">
     <div className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-        {/* Brand */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
+          <Link to="/home" className="flex items-center gap-2 mb-4">
             <span className="text-2xl">🏔️</span>
             <span className="font-heading text-2xl font-bold">
               Fshati<span className="text-seafoam">.al</span>
             </span>
-          </div>
+          </Link>
           <p className="text-sm text-cream/60 leading-relaxed">
             Albania's first rural tourism marketplace — connecting travelers with authentic village experiences, local guides, and curated adventures since 2025.
           </p>
@@ -35,10 +49,10 @@ const Footer = () => (
             <h4 className="font-heading text-lg font-bold mb-4">{col.title}</h4>
             <ul className="space-y-2.5">
               {col.links.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-sm text-cream/60 hover:text-seafoam transition-colors">
-                    {link}
-                  </a>
+                <li key={link.label}>
+                  <Link to={link.href} className="text-sm text-cream/60 hover:text-seafoam transition-colors">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
