@@ -202,18 +202,9 @@ const TourDetail = () => {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
-                <p className="text-3xl font-heading font-bold text-forest text-center">{tour.priceLabel}</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="flex items-center gap-2"><Clock className="h-4 w-4" /> {tour.duration}</p>
-                  <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {tour.zone}</p>
-                  <p className="flex items-center gap-2"><Star className="h-4 w-4" /> {tour.difficulty} level</p>
-                </div>
-                <button onClick={() => setBooking(true)} className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
-                  Rezervo Tani
-                </button>
-                <p className="text-xs text-center text-muted-foreground">Free cancellation up to 48h before</p>
-              </div>
+              <BookingWidget
+                item={{ id: id!, type: "tour", name: tour.title, price: tour.price, priceLabel: tour.priceLabel, emoji: tour.emoji }}
+              />
             </div>
           </div>
         </div>
