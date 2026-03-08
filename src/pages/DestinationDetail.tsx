@@ -97,7 +97,6 @@ const iconMap: Record<string, React.ReactNode> = {
 const DestinationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dest = id ? destinations[id] : null;
-  const [booking, setBooking] = useState(false);
 
   if (!dest) {
     return (
