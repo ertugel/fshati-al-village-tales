@@ -120,7 +120,6 @@ const difficultyColor: Record<string, string> = {
 const TourDetail = () => {
   const { id } = useParams<{ id: string }>();
   const tour = id ? toursData[id] : null;
-  const [booking, setBooking] = useState(false);
 
   if (!tour) {
     return (
