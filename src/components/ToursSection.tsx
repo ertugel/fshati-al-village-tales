@@ -116,8 +116,11 @@ const ToursSection = () => {
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-bold text-sage">{tour.price}</span>
-                  <button className="text-sm font-medium text-forest hover:text-sage transition-colors">
-                    Shiko detajet →
+                  <button
+                    onClick={() => setBooking({ id: crypto.randomUUID(), type: "tour", name: tour.title, price: parseFloat(tour.price.replace(/[^0-9]/g, "")) })}
+                    className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
+                  >
+                    Rezervo
                   </button>
                 </div>
               </div>
@@ -125,6 +128,14 @@ const ToursSection = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {booking && (
+        <BookingModal
+          open={!!booking}
+          onClose={() => setBooking(null)}
+          item={booking}
+        />
+      )}
     </section>
   );
 };
