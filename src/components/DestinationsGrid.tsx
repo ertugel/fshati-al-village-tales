@@ -160,6 +160,7 @@ const DestinationsGrid = () => {
                   </span>
                 ))}
               </div>
+              <ReviewSection itemId={d.title} itemType="accommodation" itemName={d.title} />
             </div>
           </motion.div>
         ))}

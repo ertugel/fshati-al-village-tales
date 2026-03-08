@@ -124,6 +124,7 @@ const ToursSection = () => {
                     Rezervo
                   </button>
                 </div>
+                <ReviewSection itemId={tour.title} itemType="tour" itemName={tour.title} />
               </div>
             ))}
           </motion.div>
