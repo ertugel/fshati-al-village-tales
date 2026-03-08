@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BookingModal from "./BookingModal";
+import ReviewSection from "./ReviewSection";
 
 interface Tour {
   emoji: string;
