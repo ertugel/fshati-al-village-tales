@@ -165,24 +165,10 @@ const DestinationDetail = () => {
 
             {/* Sidebar booking */}
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
-                <div className="text-center">
-                  <span className="text-5xl block mb-3">{dest.emoji}</span>
-                  <p className="text-3xl font-heading font-bold text-forest">{dest.priceLabel}</p>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {dest.tags.map((t) => (
-                    <span key={t} className="text-xs bg-sand px-2 py-0.5 rounded-full text-muted-foreground">{t}</span>
-                  ))}
-                </div>
-                <button
-                  onClick={() => setBooking(true)}
-                  className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors"
-                >
-                  Rezervo Tani
-                </button>
-                <p className="text-xs text-center text-muted-foreground">No payment required until confirmation</p>
-              </div>
+              <BookingWidget
+                item={{ id: id!, type: "accommodation", name: dest.title, price: dest.price, priceLabel: dest.priceLabel, emoji: dest.emoji }}
+                tags={dest.tags}
+              />
             </div>
           </div>
         </div>
