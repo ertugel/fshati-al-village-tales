@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Star, MessageCircle, Calendar } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BookingModal from "@/components/BookingModal";
+import BookingWidget from "@/components/BookingWidget";
 import ReviewSection from "@/components/ReviewSection";
 
 const guidesData: Record<string, {
