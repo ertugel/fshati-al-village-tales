@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Star, MessageCircle, Calendar } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BookingModal from "@/components/BookingModal";
+import BookingWidget from "@/components/BookingWidget";
 import ReviewSection from "@/components/ReviewSection";
 
 const guidesData: Record<string, {
@@ -73,7 +72,6 @@ const guidesData: Record<string, {
 const GuideDetail = () => {
   const { id } = useParams<{ id: string }>();
   const guide = id ? guidesData[id] : null;
-  const [booking, setBooking] = useState(false);
 
   if (!guide) {
     return (
@@ -148,24 +146,14 @@ const GuideDetail = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
-                <div className="text-center">
-                  <span className="text-5xl block mb-3">{guide.avatar}</span>
-                  <p className="text-3xl font-heading font-bold text-forest">{guide.priceLabel}</p>
-                </div>
-                <button onClick={() => setBooking(true)} className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
-                  Rezervo Guidën
-                </button>
-                <p className="text-xs text-center text-muted-foreground">Flexible cancellation policy</p>
-              </div>
+              <BookingWidget
+                item={{ id: id!, type: "guide", name: guide.name, price: guide.price, priceLabel: guide.priceLabel, emoji: guide.avatar }}
+              />
             </div>
           </div>
         </div>
       </div>
       <Footer />
-      {booking && (
-        <BookingModal open={booking} onClose={() => setBooking(false)} item={{ id: id!, type: "guide", name: guide.name, price: guide.price }} />
-      )}
     </div>
   );
 };
