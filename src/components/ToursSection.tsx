@@ -50,6 +50,7 @@ const difficultyColor: Record<string, string> = {
 
 const ToursSection = () => {
   const [active, setActive] = useState("day");
+  const [booking, setBooking] = useState<{ id: string; type: "tour"; name: string; price: number } | null>(null);
 
   return (
     <section id="tours" className="py-20 bg-sand/50">
