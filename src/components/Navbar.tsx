@@ -57,6 +57,9 @@ const Navbar = () => {
 
           {user ? (
             <div className="flex items-center gap-2">
+              <a href="/profile" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
+                <User className="h-3.5 w-3.5" /> Profili
+              </a>
               <a href="/my-bookings" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
                 <CalendarDays className="h-3.5 w-3.5" /> Rezervimet
               </a>
