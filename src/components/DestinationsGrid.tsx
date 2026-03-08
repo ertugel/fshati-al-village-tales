@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import BookingModal from "./BookingModal";
+import ReviewSection from "./ReviewSection";
 
 interface Destination {
   emoji: string;
@@ -159,6 +160,7 @@ const DestinationsGrid = () => {
                   </span>
                 ))}
               </div>
+              <ReviewSection itemId={d.title} itemType="accommodation" itemName={d.title} />
             </div>
           </motion.div>
         ))}
