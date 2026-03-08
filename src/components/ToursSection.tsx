@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import BookingModal from "./BookingModal";
 
 interface Tour {
   emoji: string;
@@ -49,6 +50,7 @@ const difficultyColor: Record<string, string> = {
 
 const ToursSection = () => {
   const [active, setActive] = useState("day");
+  const [booking, setBooking] = useState<{ id: string; type: "tour"; name: string; price: number } | null>(null);
 
   return (
     <section id="tours" className="py-20 bg-sand/50">
@@ -114,8 +116,11 @@ const ToursSection = () => {
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-bold text-sage">{tour.price}</span>
-                  <button className="text-sm font-medium text-forest hover:text-sage transition-colors">
-                    Shiko detajet →
+                  <button
+                    onClick={() => setBooking({ id: crypto.randomUUID(), type: "tour", name: tour.title, price: parseFloat(tour.price.replace(/[^0-9]/g, "")) })}
+                    className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
+                  >
+                    Rezervo
                   </button>
                 </div>
               </div>
@@ -123,6 +128,14 @@ const ToursSection = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {booking && (
+        <BookingModal
+          open={!!booking}
+          onClose={() => setBooking(null)}
+          item={booking}
+        />
+      )}
     </section>
   );
 };
