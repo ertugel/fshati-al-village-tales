@@ -14,16 +14,264 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accommodations: {
+        Row: {
+          amenities: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          location: string
+          name: string
+          owner_id: string
+          price_per_night: number
+          rating: number | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          location: string
+          name: string
+          owner_id: string
+          price_per_night: number
+          rating?: number | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amenities?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          location?: string
+          name?: string
+          owner_id?: string
+          price_per_night?: number
+          rating?: number | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          check_in: string
+          check_out: string | null
+          created_at: string
+          guests: number
+          id: string
+          item_id: string
+          item_name: string
+          item_type: string
+          notes: string | null
+          status: string
+          total_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          check_in: string
+          check_out?: string | null
+          created_at?: string
+          guests?: number
+          id?: string
+          item_id: string
+          item_name: string
+          item_type: string
+          notes?: string | null
+          status?: string
+          total_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string | null
+          created_at?: string
+          guests?: number
+          id?: string
+          item_id?: string
+          item_name?: string
+          item_type?: string
+          notes?: string | null
+          status?: string
+          total_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      guides: {
+        Row: {
+          avatar_emoji: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          languages: string[] | null
+          name: string
+          price_max: number | null
+          price_per_day: number
+          rating: number | null
+          specialization: string
+          updated_at: string
+          user_id: string | null
+          zones: string[] | null
+        }
+        Insert: {
+          avatar_emoji?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name: string
+          price_max?: number | null
+          price_per_day: number
+          rating?: number | null
+          specialization: string
+          updated_at?: string
+          user_id?: string | null
+          zones?: string[] | null
+        }
+        Update: {
+          avatar_emoji?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name?: string
+          price_max?: number | null
+          price_per_day?: number
+          rating?: number | null
+          specialization?: string
+          updated_at?: string
+          user_id?: string | null
+          zones?: string[] | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tours: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          duration: string
+          duration_category: string
+          emoji: string | null
+          id: string
+          includes: string[] | null
+          is_active: boolean | null
+          price: number
+          title: string
+          updated_at: string
+          zone: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration: string
+          duration_category: string
+          emoji?: string | null
+          id?: string
+          includes?: string[] | null
+          is_active?: boolean | null
+          price: number
+          title: string
+          updated_at?: string
+          zone?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration?: string
+          duration_category?: string
+          emoji?: string | null
+          id?: string
+          includes?: string[] | null
+          is_active?: boolean | null
+          price?: number
+          title?: string
+          updated_at?: string
+          zone?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "tourist" | "owner" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +398,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["tourist", "owner", "admin"],
+    },
   },
 } as const
