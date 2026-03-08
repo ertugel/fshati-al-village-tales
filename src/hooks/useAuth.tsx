@@ -7,9 +7,11 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   roles: string[];
+  profile: { full_name: string | null; avatar_url: string | null } | null;
   signUp: (email: string, password: string, fullName: string, role: "tourist" | "owner") => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
   hasRole: (role: string) => boolean;
 }
 
@@ -20,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<string[]>([]);
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
 
   const fetchRoles = async (userId: string) => {
     const { data } = await supabase
@@ -29,15 +32,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRoles(data?.map((r) => r.role) || []);
   };
 
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("user_id", userId)
+      .single();
+    setProfile(data);
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          setTimeout(() => fetchRoles(session.user.id), 0);
+          setTimeout(() => {
+            fetchRoles(session.user.id);
+            fetchProfile(session.user.id);
+          }, 0);
         } else {
           setRoles([]);
+          setProfile(null);
         }
         setLoading(false);
       }
@@ -48,6 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchRoles(session.user.id);
+        fetchProfile(session.user.id);
       }
       setLoading(false);
     });
@@ -60,18 +77,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, role },
         emailRedirectTo: window.location.origin,
       },
     });
-    if (!error) {
-      // After signup, add the chosen role (trigger adds 'tourist' by default)
-      // If owner, we add that role after they confirm email and sign in
-      if (role === "owner") {
-        // Store desired role in metadata for later
-        // The trigger creates tourist role; we'll handle owner role addition on first login
-      }
-    }
     return { error };
   };
 
@@ -85,12 +94,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setSession(null);
     setRoles([]);
+    setProfile(null);
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
   };
 
   const hasRole = (role: string) => roles.includes(role);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, roles, signUp, signIn, signOut, hasRole }}>
+    <AuthContext.Provider value={{ user, session, loading, roles, profile, signUp, signIn, signOut, resetPassword, hasRole }}>
       {children}
     </AuthContext.Provider>
   );
