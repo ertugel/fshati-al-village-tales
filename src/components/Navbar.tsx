@@ -121,6 +121,9 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
+              <a href="/my-bookings" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
+                📅 Rezervimet
+              </a>
               {hasRole("owner") && (
                 <a href="/dashboard" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
                   🏠 Dashboard
