@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Star, Wifi, Car, Coffee, Mountain, Utensils, Shield } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BookingWidget from "@/components/BookingWidget";
+import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
 
 const destinations: Record<string, {
@@ -97,6 +98,7 @@ const iconMap: Record<string, React.ReactNode> = {
 const DestinationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dest = id ? destinations[id] : null;
+  const [booking, setBooking] = useState(false);
 
   if (!dest) {
     return (
@@ -165,15 +167,36 @@ const DestinationDetail = () => {
 
             {/* Sidebar booking */}
             <div className="lg:col-span-1">
-              <BookingWidget
-                item={{ id: id!, type: "accommodation", name: dest.title, price: dest.price, priceLabel: dest.priceLabel, emoji: dest.emoji }}
-                tags={dest.tags}
-              />
+              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
+                <div className="text-center">
+                  <span className="text-5xl block mb-3">{dest.emoji}</span>
+                  <p className="text-3xl font-heading font-bold text-forest">{dest.priceLabel}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {dest.tags.map((t) => (
+                    <span key={t} className="text-xs bg-sand px-2 py-0.5 rounded-full text-muted-foreground">{t}</span>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setBooking(true)}
+                  className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors"
+                >
+                  Rezervo Tani
+                </button>
+                <p className="text-xs text-center text-muted-foreground">No payment required until confirmation</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <Footer />
+      {booking && (
+        <BookingModal
+          open={booking}
+          onClose={() => setBooking(false)}
+          item={{ id: id!, type: "accommodation", name: dest.title, price: dest.price }}
+        />
+      )}
     </div>
   );
 };

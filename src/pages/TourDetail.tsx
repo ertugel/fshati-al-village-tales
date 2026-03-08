@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, MapPin, Star, Check } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BookingWidget from "@/components/BookingWidget";
+import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
 
 const toursData: Record<string, {
@@ -120,6 +121,7 @@ const difficultyColor: Record<string, string> = {
 const TourDetail = () => {
   const { id } = useParams<{ id: string }>();
   const tour = id ? toursData[id] : null;
+  const [booking, setBooking] = useState(false);
 
   if (!tour) {
     return (
@@ -202,14 +204,26 @@ const TourDetail = () => {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <BookingWidget
-                item={{ id: id!, type: "tour", name: tour.title, price: tour.price, priceLabel: tour.priceLabel, emoji: tour.emoji }}
-              />
+              <div className="sticky top-28 bg-card rounded-2xl border border-border p-6 shadow-card space-y-4">
+                <p className="text-3xl font-heading font-bold text-forest text-center">{tour.priceLabel}</p>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p className="flex items-center gap-2"><Clock className="h-4 w-4" /> {tour.duration}</p>
+                  <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {tour.zone}</p>
+                  <p className="flex items-center gap-2"><Star className="h-4 w-4" /> {tour.difficulty} level</p>
+                </div>
+                <button onClick={() => setBooking(true)} className="w-full rounded-xl bg-forest py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
+                  Rezervo Tani
+                </button>
+                <p className="text-xs text-center text-muted-foreground">Free cancellation up to 48h before</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <Footer />
+      {booking && (
+        <BookingModal open={booking} onClose={() => setBooking(false)} item={{ id: id!, type: "tour", name: tour.title, price: tour.price }} />
+      )}
     </div>
   );
 };
