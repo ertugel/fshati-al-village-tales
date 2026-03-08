@@ -154,9 +154,6 @@ const GuideDetail = () => {
         </div>
       </div>
       <Footer />
-      {booking && (
-        <BookingModal open={booking} onClose={() => setBooking(false)} item={{ id: id!, type: "guide", name: guide.name, price: guide.price }} />
-      )}
     </div>
   );
 };

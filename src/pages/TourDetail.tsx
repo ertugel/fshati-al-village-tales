@@ -210,9 +210,6 @@ const TourDetail = () => {
         </div>
       </div>
       <Footer />
-      {booking && (
-        <BookingModal open={booking} onClose={() => setBooking(false)} item={{ id: id!, type: "tour", name: tour.title, price: tour.price }} />
-      )}
     </div>
   );
 };

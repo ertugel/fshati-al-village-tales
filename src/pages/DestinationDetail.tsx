@@ -174,13 +174,6 @@ const DestinationDetail = () => {
         </div>
       </div>
       <Footer />
-      {booking && (
-        <BookingModal
-          open={booking}
-          onClose={() => setBooking(false)}
-          item={{ id: id!, type: "accommodation", name: dest.title, price: dest.price }}
-        />
-      )}
     </div>
   );
 };
