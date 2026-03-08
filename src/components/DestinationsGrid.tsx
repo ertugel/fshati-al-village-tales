@@ -84,7 +84,10 @@ const Stars = ({ rating }: { rating: number }) => (
   </div>
 );
 
-const DestinationsGrid = () => (
+const DestinationsGrid = () => {
+  const [booking, setBooking] = useState<{ id: string; type: "accommodation"; name: string; price: number } | null>(null);
+
+  return (
   <section id="destinations" className="py-20 bg-background">
     <div className="container mx-auto px-4">
       <motion.div
