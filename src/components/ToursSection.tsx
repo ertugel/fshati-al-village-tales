@@ -128,6 +128,12 @@ const ToursSection = () => {
             ))}
           </motion.div>
         </AnimatePresence>
+
+        <div className="text-center mt-10">
+          <Link to="/tours" className="inline-block rounded-full bg-forest px-8 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
+            Shiko të gjitha turnet →
+          </Link>
+        </div>
       </div>
 
       {booking && (
