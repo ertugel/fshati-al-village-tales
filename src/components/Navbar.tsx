@@ -124,6 +124,9 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
+              <a href="/profile" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
+                👤 Profili
+              </a>
               <a href="/my-bookings" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
                 📅 Rezervimet
               </a>
