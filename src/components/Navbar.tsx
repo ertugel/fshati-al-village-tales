@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut } from "lucide-react";
+import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut, CalendarDays } from "lucide-react";
 
 const navLinks = [
   { label: "Destinacione", href: "#destinations" },
