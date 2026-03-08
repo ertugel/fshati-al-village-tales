@@ -145,20 +145,35 @@ const DestinationsGrid = () => {
               <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{d.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-sage">{d.price}</span>
-                <div className="flex gap-1.5">
-                  {d.tags.map((t) => (
-                    <span key={t} className="text-xs bg-sand px-2 py-0.5 rounded-full text-muted-foreground">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                <button
+                  onClick={() => setBooking({ id: crypto.randomUUID(), type: "accommodation", name: d.title, price: parseFloat(d.price.replace(/[^0-9]/g, "")) })}
+                  className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
+                >
+                  Rezervo
+                </button>
+              </div>
+              <div className="flex gap-1.5 mt-2">
+                {d.tags.map((t) => (
+                  <span key={t} className="text-xs bg-sand px-2 py-0.5 rounded-full text-muted-foreground">
+                    {t}
+                  </span>
+                ))}
               </div>
             </div>
           </motion.div>
         ))}
       </div>
     </div>
+
+    {booking && (
+      <BookingModal
+        open={!!booking}
+        onClose={() => setBooking(null)}
+        item={booking}
+      />
+    )}
   </section>
-);
+  );
+};
 
 export default DestinationsGrid;
