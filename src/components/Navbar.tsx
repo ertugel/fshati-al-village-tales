@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut } from "lucide-react";
 
 const navLinks = [
   { label: "Destinacione", href: "#destinations" },
@@ -11,6 +13,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, hasRole, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -27,7 +30,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
-        <a href="#" className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2">
           <span className="text-2xl">🏔️</span>
           <span
             className={`font-heading text-2xl font-bold tracking-tight transition-colors ${
@@ -39,7 +42,7 @@ const Navbar = () => {
         </a>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {navLinks.map((l) => (
             <a
               key={l.href}
@@ -51,12 +54,34 @@ const Navbar = () => {
               {l.label}
             </a>
           ))}
-          <a
-            href="#newsletter"
-            className="rounded-full bg-seafoam/90 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-seafoam"
-          >
-            Rezervo Tani
-          </a>
+
+          {user ? (
+            <div className="flex items-center gap-2">
+              {hasRole("owner") && (
+                <a href="/dashboard" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
+                  <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
+                </a>
+              )}
+              {hasRole("admin") && (
+                <a href="/admin" className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}>
+                  <ShieldCheck className="h-3.5 w-3.5" /> Admin
+                </a>
+              )}
+              <button
+                onClick={signOut}
+                className={`text-sm font-medium transition-colors hover:text-seafoam flex items-center gap-1 ${scrolled ? "text-foreground" : "text-cream/80"}`}
+              >
+                <LogOut className="h-3.5 w-3.5" /> Dil
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/auth"
+              className="rounded-full bg-seafoam/90 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-seafoam flex items-center gap-1.5"
+            >
+              <LogIn className="h-3.5 w-3.5" /> Hyr / Regjistrohu
+            </a>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -91,12 +116,30 @@ const Navbar = () => {
               {l.label}
             </a>
           ))}
-          <a
-            href="#newsletter"
-            className="mt-3 block rounded-full bg-seafoam/90 px-5 py-2.5 text-center text-sm font-semibold text-forest"
-          >
-            Rezervo Tani
-          </a>
+          {user ? (
+            <>
+              {hasRole("owner") && (
+                <a href="/dashboard" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
+                  🏠 Dashboard
+                </a>
+              )}
+              {hasRole("admin") && (
+                <a href="/admin" className="block py-3 text-sm font-medium text-foreground hover:text-sage border-b border-border/50">
+                  ⚙️ Admin
+                </a>
+              )}
+              <button onClick={signOut} className="mt-3 block w-full rounded-full bg-destructive/10 px-5 py-2.5 text-center text-sm font-semibold text-destructive">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <a
+              href="/auth"
+              className="mt-3 block rounded-full bg-seafoam/90 px-5 py-2.5 text-center text-sm font-semibold text-forest"
+            >
+              Hyr / Regjistrohu
+            </a>
+          )}
         </div>
       )}
     </nav>
