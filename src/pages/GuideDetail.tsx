@@ -144,7 +144,7 @@ const GuideDetail = () => {
                 </div>
               </div>
 
-              <ReviewSection itemId={guide.name} itemType="accommodation" itemName={guide.name} />
+              <ReviewSection itemId={guide.name} itemType="guide" itemName={guide.name} />
             </div>
 
             <div className="lg:col-span-1">
