@@ -52,7 +52,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     await signOut();
     setDropdownOpen(false);
-    navigate("/home");
+    navigate("/");
   };
 
   const userInitials = profile?.full_name
