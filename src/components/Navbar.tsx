@@ -46,7 +46,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const isHome = location.pathname === "/home" || location.pathname === "/";
+  const isHome = location.pathname === "/" || location.pathname === "/home";
   const showTransparent = isHome && !scrolled;
 
   const handleSignOut = async () => {
