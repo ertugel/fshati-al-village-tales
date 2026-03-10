@@ -19,6 +19,7 @@ import GuideDetail from "./pages/GuideDetail";
 import Services from "./pages/Services";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import BecomePartner from "./pages/BecomePartner";
 import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
