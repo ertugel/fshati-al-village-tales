@@ -121,7 +121,7 @@ const ToursSection = () => {
                     onClick={() => setBooking({ id: crypto.randomUUID(), type: "tour", name: tour.title, price: parseFloat(tour.price.replace(/[^0-9]/g, "")) })}
                     className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
                   >
-                    Rezervo
+                    Book Tour
                   </button>
                 </div>
               </div>
