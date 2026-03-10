@@ -46,13 +46,13 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const isHome = location.pathname === "/home" || location.pathname === "/";
+  const isHome = location.pathname === "/" || location.pathname === "/home";
   const showTransparent = isHome && !scrolled;
 
   const handleSignOut = async () => {
     await signOut();
     setDropdownOpen(false);
-    navigate("/home");
+    navigate("/");
   };
 
   const userInitials = profile?.full_name
@@ -67,7 +67,7 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
-          <Link to="/home" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl">🏔️</span>
             <span className={`font-heading text-2xl font-bold tracking-tight transition-colors ${showTransparent ? "text-cream" : "text-foreground"}`}>
               Fshati<span className="text-seafoam">.al</span>
