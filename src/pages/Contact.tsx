@@ -8,6 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToTop from "@/components/BackToTop";
+import usePageMeta from "@/hooks/usePageMeta";
 
 const infoCards = [
   { icon: Mail, label: "Email", value: "hello@fshati.al" },
@@ -24,6 +26,7 @@ const faqs = [
 ];
 
 const Contact = () => {
+  usePageMeta("Contact — Fshati.al");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -111,6 +114,7 @@ const Contact = () => {
           </div>
         </div>
       </div>
+      <BackToTop />
       <Footer />
     </div>
   );
