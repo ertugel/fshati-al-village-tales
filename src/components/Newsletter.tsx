@@ -69,7 +69,6 @@ const Newsletter = () => {
               </button>
             </form>
             {error && <p className="text-sm text-destructive mt-2">{error}</p>}
-            </form>
           )}
 
           <p className="text-xs text-muted-foreground mt-4">
