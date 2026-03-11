@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import CategoryStrip from "@/components/CategoryStrip";
 import DestinationsGrid from "@/components/DestinationsGrid";
 import ToursSection from "@/components/ToursSection";
+import EventsSection from "@/components/EventsSection";
 import GuidesGrid from "@/components/GuidesGrid";
 import AffiliateServices from "@/components/AffiliateServices";
 import ThematicPackages from "@/components/ThematicPackages";
@@ -26,6 +27,7 @@ const Index = () => {
       <CategoryStrip />
       <DestinationsGrid />
       <ToursSection />
+      <EventsSection />
       <GuidesGrid />
       <AffiliateServices />
       <ThematicPackages />
