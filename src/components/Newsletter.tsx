@@ -50,25 +50,27 @@ const Newsletter = () => {
               <p className="text-sm text-muted-foreground">Check your inbox. You've joined 2,847 other travel enthusiasts.</p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 rounded-xl bg-background px-4 py-3 text-sm outline-none border border-border focus:ring-2 focus:ring-sage/50"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap disabled:opacity-60 flex items-center gap-2"
-              >
-                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {loading ? "Subscribing..." : "Subscribe"}
-              </button>
-            </form>
-            {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+            <>
+              <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 rounded-xl bg-background px-4 py-3 text-sm outline-none border border-border focus:ring-2 focus:ring-sage/50"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap disabled:opacity-60 flex items-center gap-2"
+                >
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {loading ? "Subscribing..." : "Subscribe"}
+                </button>
+              </form>
+              {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+            </>
           )}
 
           <p className="text-xs text-muted-foreground mt-4">
