@@ -4,6 +4,8 @@ import { Search, CalendarCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToTop from "@/components/BackToTop";
+import usePageMeta from "@/hooks/usePageMeta";
 
 const steps = [
   { icon: Search, title: "Search", description: "Browse 300+ authentic rural destinations, local guides, and curated tours across Albania." },

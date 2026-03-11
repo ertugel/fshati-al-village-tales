@@ -61,10 +61,14 @@ const Newsletter = () => {
               />
               <button
                 type="submit"
-                className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap"
+                disabled={loading}
+                className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap disabled:opacity-60 flex items-center gap-2"
               >
-                Subscribe
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {loading ? "Subscribing..." : "Subscribe"}
               </button>
+            </form>
+            {error && <p className="text-sm text-destructive mt-2">{error}</p>}
             </form>
           )}
 

@@ -63,9 +63,9 @@ const Footer = () => (
 
     <div className="border-t border-cream/10">
       <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-cream/40">© 2025 Fshati.al — All rights reserved</p>
+        <p className="text-xs text-cream/40">© 2025 Fshati.al · Startup Albania 2025</p>
         <div className="flex gap-4">
-          {["🏆 Startup Albania 2025", "🤝 ATOA Partner", "✅ GDPR"].map((badge) => (
+          {["🤝 ATOA Partner", "✅ GDPR"].map((badge) => (
             <span key={badge} className="text-xs text-cream/40">{badge}</span>
           ))}
         </div>
