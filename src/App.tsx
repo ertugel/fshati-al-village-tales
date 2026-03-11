@@ -49,7 +49,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/become-a-partner" element={<BecomePartner />} />
             <Route path="/dashboard" element={<ProtectedRoute requiredRole="owner"><OwnerDashboard /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminPanel />} />
             <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
