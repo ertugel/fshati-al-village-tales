@@ -1,47 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 import BookingModal from "./BookingModal";
 
 interface Tour {
-  emoji: string;
+  id: string;
+  emoji: string | null;
   title: string;
   duration: string;
-  price: string;
-  description: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  zone: string;
+  price: number;
+  description: string | null;
+  difficulty: string | null;
+  zone: string | null;
+  duration_category: string;
 }
 
 const tabs = [
-  { key: "day", label: "Day Tours" },
-  { key: "3-4", label: "3-4 Days" },
-  { key: "5-7", label: "5-7 Days" },
-  { key: "10-11", label: "10-11 Days" },
+  { key: "day", label: "Day Tours", dbKey: "day" },
+  { key: "3-4", label: "3-4 Days", dbKey: "3-4days" },
+  { key: "5-7", label: "5-7 Days", dbKey: "5-7days" },
+  { key: "10-11", label: "10-11 Days", dbKey: "10-11days" },
 ];
-
-const tours: Record<string, Tour[]> = {
-  day: [
-    { emoji: "🏞️", title: "Osum Canyon", duration: "1 day", price: "€60", description: "Hike through Albania's Grand Canyon with turquoise river pools.", difficulty: "Medium", zone: "Berat" },
-    { emoji: "🚣", title: "Rafting Osumi", duration: "1 day", price: "€65", description: "White-water rafting through stunning canyon walls.", difficulty: "Hard", zone: "Çorovodë" },
-    { emoji: "🏛️", title: "Berat City Walk", duration: "Half day", price: "€15", description: "Guided UNESCO walking tour through the City of a Thousand Windows.", difficulty: "Easy", zone: "Berat" },
-    { emoji: "⛴️", title: "Lake Koman Ferry", duration: "1 day", price: "€85", description: "Scenic ferry through fjord-like landscapes of northern Albania.", difficulty: "Easy", zone: "Shkodër" },
-    { emoji: "🏖️", title: "Butrint + Ksamil", duration: "1 day", price: "€45", description: "Ancient ruins and pristine island beaches in one trip.", difficulty: "Easy", zone: "Sarandë" },
-    { emoji: "🍳", title: "Cooking Class", duration: "Half day", price: "€35", description: "Learn to make byrek, tavë kosi and other Albanian classics.", difficulty: "Easy", zone: "Tiranë" },
-  ],
-  "3-4": [
-    { emoji: "🏔️", title: "Albania in 3 Days", duration: "3 days", price: "€550", description: "Best highlights: Berat, Gjirokastër, Blue Eye in one trip.", difficulty: "Medium", zone: "Multi-region" },
-    { emoji: "🏛️", title: "UNESCO Cities", duration: "3 days", price: "€380", description: "Berat and Gjirokastër — two UNESCO heritage cities.", difficulty: "Easy", zone: "South" },
-    { emoji: "⛰️", title: "Alps Trek 4D", duration: "4 days", price: "€480", description: "Theth–Valbona crossing with local mountain guides.", difficulty: "Hard", zone: "Northern Alps" },
-  ],
-  "5-7": [
-    { emoji: "🧘", title: "Wellness Retreat 5D", duration: "5 days", price: "€900", description: "Thermal baths, yoga, organic cuisine in Përmet.", difficulty: "Easy", zone: "Përmet" },
-    { emoji: "🍷", title: "Wine & Gastro 5D", duration: "5 days", price: "€750", description: "Albania's best wineries, olive groves, and farm stays.", difficulty: "Easy", zone: "Multi-region" },
-  ],
-  "10-11": [
-    { emoji: "🗺️", title: "North to South 11D", duration: "11 days", price: "€1,480", description: "Complete Albania — Alps to Riviera, cities to villages.", difficulty: "Medium", zone: "Full country" },
-  ],
-};
 
 const difficultyColor: Record<string, string> = {
   Easy: "bg-seafoam/30 text-forest",
@@ -51,35 +32,41 @@ const difficultyColor: Record<string, string> = {
 
 const ToursSection = () => {
   const [active, setActive] = useState("day");
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState<{ id: string; type: "tour"; name: string; price: number } | null>(null);
+
+  const activeDbKey = tabs.find((t) => t.key === active)?.dbKey || "day";
+
+  useEffect(() => {
+    const fetchTours = async () => {
+      setLoading(true);
+      const { data } = await supabase
+        .from("tours")
+        .select("*")
+        .eq("duration_category", activeDbKey)
+        .order("created_at", { ascending: false });
+      setTours((data as Tour[]) || []);
+      setLoading(false);
+    };
+    fetchTours();
+  }, [activeDbKey]);
 
   return (
     <section id="tours" className="py-20 bg-sand/50">
       <div className="container mx-auto px-4">
-        <motion.div
-          className="text-center mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-3">
-            Turne & Eksperienca
-          </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            From half-day adventures to complete country explorations
-          </p>
+        <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-3">Turne & Eksperienca</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto">From half-day adventures to complete country explorations</p>
         </motion.div>
 
-        {/* Tabs */}
         <div className="flex justify-center gap-2 mb-10 flex-wrap">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setActive(t.key)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
-                active === t.key
-                  ? "bg-forest text-cream"
-                  : "bg-card text-muted-foreground border border-border hover:bg-sand"
+                active === t.key ? "bg-forest text-cream" : "bg-card text-muted-foreground border border-border hover:bg-sand"
               }`}
             >
               {t.label}
@@ -87,47 +74,64 @@ const ToursSection = () => {
           ))}
         </div>
 
-        {/* Tour Cards */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
-          >
-            {tours[active]?.map((tour) => (
-              <div
-                key={tour.title}
-                className="bg-card rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-all group"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-3xl">{tour.emoji}</span>
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyColor[tour.difficulty]}`}>
-                    {tour.difficulty}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                  <span>⏱ {tour.duration}</span>
-                  <span>•</span>
-                  <span>📍 {tour.zone}</span>
-                </div>
-                <h3 className="font-heading text-lg font-bold text-foreground mb-1">{tour.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-sage">{tour.price}</span>
-                  <button
-                    onClick={() => setBooking({ id: crypto.randomUUID(), type: "tour", name: tour.title, price: parseFloat(tour.price.replace(/[^0-9]/g, "")) })}
-                    className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
-                  >
-                    Book Tour
-                  </button>
-                </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-card rounded-2xl border border-border p-5">
+                <Skeleton className="h-8 w-8 rounded mb-3" />
+                <Skeleton className="h-4 w-3/4 mb-2" />
+                <Skeleton className="h-3 w-full mb-4" />
+                <Skeleton className="h-8 w-1/3" />
               </div>
             ))}
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              {tours.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-muted-foreground">
+                  Nuk ka turne në këtë kategori ende.
+                </div>
+              ) : (
+                tours.map((tour) => (
+                  <div key={tour.id} className="bg-card rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-all group">
+                    <div className="flex items-start justify-between mb-3">
+                      <span className="text-3xl">{tour.emoji}</span>
+                      {tour.difficulty && (
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyColor[tour.difficulty] || "bg-muted text-foreground"}`}>
+                          {tour.difficulty}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <span>⏱ {tour.duration}</span>
+                      <span>•</span>
+                      <span>📍 {tour.zone}</span>
+                    </div>
+                    <h3 className="font-heading text-lg font-bold text-foreground mb-1">{tour.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-bold text-sage">€{tour.price}</span>
+                      <button
+                        onClick={() => setBooking({ id: tour.id, type: "tour", name: tour.title, price: tour.price })}
+                        className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors"
+                      >
+                        Book Tour
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </motion.div>
+          </AnimatePresence>
+        )}
 
         <div className="text-center mt-10">
           <Link to="/tours" className="inline-block rounded-full bg-forest px-8 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
@@ -136,13 +140,7 @@ const ToursSection = () => {
         </div>
       </div>
 
-      {booking && (
-        <BookingModal
-          open={!!booking}
-          onClose={() => setBooking(null)}
-          item={booking}
-        />
-      )}
+      {booking && <BookingModal open={!!booking} onClose={() => setBooking(null)} item={booking} />}
     </section>
   );
 };

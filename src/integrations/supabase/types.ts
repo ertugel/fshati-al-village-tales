@@ -67,46 +67,166 @@ export type Database = {
           check_in: string
           check_out: string | null
           created_at: string
+          destination_name: string | null
+          email: string | null
+          full_name: string | null
           guests: number
           id: string
-          item_id: string
-          item_name: string
-          item_type: string
+          item_id: string | null
+          item_name: string | null
+          item_type: string | null
+          message: string | null
           notes: string | null
+          phone: string | null
           status: string
-          total_price: number
+          total_price: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           check_in: string
           check_out?: string | null
           created_at?: string
+          destination_name?: string | null
+          email?: string | null
+          full_name?: string | null
           guests?: number
           id?: string
-          item_id: string
-          item_name: string
-          item_type: string
+          item_id?: string | null
+          item_name?: string | null
+          item_type?: string | null
+          message?: string | null
           notes?: string | null
+          phone?: string | null
           status?: string
-          total_price: number
+          total_price?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           check_in?: string
           check_out?: string | null
           created_at?: string
+          destination_name?: string | null
+          email?: string | null
+          full_name?: string | null
           guests?: number
           id?: string
-          item_id?: string
-          item_name?: string
-          item_type?: string
+          item_id?: string | null
+          item_name?: string | null
+          item_type?: string | null
+          message?: string | null
           notes?: string | null
+          phone?: string | null
           status?: string
-          total_price?: number
+          total_price?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          badge: string | null
+          created_at: string
+          description: string | null
+          emoji: string | null
+          featured: boolean | null
+          id: string
+          image_gradient: string | null
+          name: string
+          price: number | null
+          price_unit: string | null
+          rating: number | null
+          review_count: number | null
+          status: string | null
+          type: string | null
+          zone: string | null
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          featured?: boolean | null
+          id?: string
+          image_gradient?: string | null
+          name: string
+          price?: number | null
+          price_unit?: string | null
+          rating?: number | null
+          review_count?: number | null
+          status?: string | null
+          type?: string | null
+          zone?: string | null
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          featured?: boolean | null
+          id?: string
+          image_gradient?: string | null
+          name?: string
+          price?: number | null
+          price_unit?: string | null
+          rating?: number | null
+          review_count?: number | null
+          status?: string | null
+          type?: string | null
+          zone?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          emoji: string | null
+          end_date: string | null
+          featured: boolean | null
+          id: string
+          location: string
+          price: number | null
+          price_note: string | null
+          start_date: string
+          status: string | null
+          title: string
+          type: string | null
+          zone: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          end_date?: string | null
+          featured?: boolean | null
+          id?: string
+          location: string
+          price?: number | null
+          price_note?: string | null
+          start_date: string
+          status?: string | null
+          title: string
+          type?: string | null
+          zone?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          end_date?: string | null
+          featured?: boolean | null
+          id?: string
+          location?: string
+          price?: number | null
+          price_note?: string | null
+          start_date?: string
+          status?: string | null
+          title?: string
+          type?: string | null
+          zone?: string | null
         }
         Relationships: []
       }
@@ -232,10 +352,12 @@ export type Database = {
           duration: string
           duration_category: string
           emoji: string | null
+          featured: boolean | null
           id: string
           includes: string[] | null
           is_active: boolean | null
           price: number
+          status: string | null
           title: string
           updated_at: string
           zone: string | null
@@ -247,10 +369,12 @@ export type Database = {
           duration: string
           duration_category: string
           emoji?: string | null
+          featured?: boolean | null
           id?: string
           includes?: string[] | null
           is_active?: boolean | null
           price: number
+          status?: string | null
           title: string
           updated_at?: string
           zone?: string | null
@@ -262,10 +386,12 @@ export type Database = {
           duration?: string
           duration_category?: string
           emoji?: string | null
+          featured?: boolean | null
           id?: string
           includes?: string[] | null
           is_active?: boolean | null
           price?: number
+          status?: string | null
           title?: string
           updated_at?: string
           zone?: string | null
