@@ -45,9 +45,9 @@ const Newsletter = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
             >
-              <span className="text-4xl block mb-3">🎉</span>
-              <h3 className="font-heading text-2xl font-bold text-foreground mb-2">Faleminderit!</h3>
-              <p className="text-sm text-muted-foreground">You've joined 2,847 other travel enthusiasts.</p>
+              <span className="text-4xl block mb-3">🌿</span>
+              <h3 className="font-heading text-2xl font-bold text-foreground mb-2">Welcome!</h3>
+              <p className="text-sm text-muted-foreground">Check your inbox. You've joined 2,847 other travel enthusiasts.</p>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
