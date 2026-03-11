@@ -114,6 +114,7 @@ const Contact = () => {
           </div>
         </div>
       </div>
+      <BackToTop />
       <Footer />
     </div>
   );
