@@ -138,8 +138,10 @@ const About = () => {
       </div>
     </section>
 
+    <BackToTop />
     <Footer />
   </div>
-);
+  );
+};
 
 export default About;
