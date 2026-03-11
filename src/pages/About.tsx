@@ -26,7 +26,9 @@ const team = [
   { emoji: "👩‍💻", name: "Besnik Hoxha", title: "Tech Lead & CTO", bio: "Besnik builds the technology that connects travelers with Albania's hidden gems seamlessly." },
 ];
 
-const About = () => (
+const About = () => {
+  usePageMeta("About — Fshati.al");
+  return (
   <div className="min-h-screen bg-background">
     <Navbar />
 
