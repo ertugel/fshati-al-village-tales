@@ -89,7 +89,7 @@ const CommunityChat = () => {
 
     const msg = input.trim();
     setInput("");
-    await supabase.from("chat_messages").insert({
+    await (supabase.from("chat_messages" as any).insert({
       username,
       country_flag: flag,
       message: msg,
