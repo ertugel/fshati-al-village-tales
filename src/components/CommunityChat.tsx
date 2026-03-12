@@ -93,7 +93,7 @@ const CommunityChat = () => {
       username,
       country_flag: flag,
       message: msg,
-    });
+    }) as any);
   }, [input, username, flag]);
 
   const pinnedMessages = messages.filter((m) => m.is_pinned);
