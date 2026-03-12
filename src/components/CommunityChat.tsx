@@ -32,12 +32,11 @@ const CommunityChat = () => {
   // Fetch initial messages
   useEffect(() => {
     const fetchMessages = async () => {
-      const { data } = await supabase
-        .from("chat_messages")
+      const { data } = await (supabase
+        .from("chat_messages" as any)
         .select("*")
-        .eq("deleted", false)
         .order("created_at", { ascending: true })
-        .limit(50);
+        .limit(50) as any);
       if (data) setMessages(data as ChatMessage[]);
     };
     fetchMessages();
