@@ -125,6 +125,39 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          country_flag: string | null
+          created_at: string
+          deleted: boolean | null
+          id: string
+          is_admin: boolean | null
+          is_pinned: boolean | null
+          message: string
+          username: string
+        }
+        Insert: {
+          country_flag?: string | null
+          created_at?: string
+          deleted?: boolean | null
+          id?: string
+          is_admin?: boolean | null
+          is_pinned?: boolean | null
+          message: string
+          username: string
+        }
+        Update: {
+          country_flag?: string | null
+          created_at?: string
+          deleted?: boolean | null
+          id?: string
+          is_admin?: boolean | null
+          is_pinned?: boolean | null
+          message?: string
+          username?: string
+        }
+        Relationships: []
+      }
       destinations: {
         Row: {
           badge: string | null
@@ -341,6 +374,27 @@ export type Database = {
           rating?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string | null
         }
         Relationships: []
       }
