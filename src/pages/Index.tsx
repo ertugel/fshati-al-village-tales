@@ -13,12 +13,15 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 import usePageMeta from "@/hooks/usePageMeta";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Index = () => {
   usePageMeta(
     "Fshati.al — Discover Authentic Rural Albania",
     "Albania's first rural tourism marketplace. Agritourism, local guides and thematic tours."
   );
+
+  const { settings } = useSiteSettings();
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,8 +30,8 @@ const Index = () => {
       <CategoryStrip />
       <DestinationsGrid />
       <ToursSection />
-      <EventsSection />
-      <GuidesGrid />
+      {settings.show_events !== "false" && <EventsSection />}
+      {settings.show_guides !== "false" && <GuidesGrid />}
       <AffiliateServices />
       <ThematicPackages />
       <CommunityChat />

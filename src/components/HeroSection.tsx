@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const stats = [
   { value: "300+", label: "Destinacione" },
@@ -32,6 +33,7 @@ const HeroSection = () => {
   const [date, setDate] = useState("");
   const [type, setType] = useState("");
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
 
   useEffect(() => {
     setParticles(
@@ -52,6 +54,10 @@ const HeroSection = () => {
     navigate(`/destinations?${params.toString()}`);
   };
 
+  // Parse headline to keep the italic part
+  const headline = settings.hero_headline || "Ku çdo fshat tregon një histori";
+  const parts = headline.split(/(një histori)/i);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero">
       {particles.map((p) => (
@@ -68,11 +74,18 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-4 pt-24 pb-32">
         <motion.div className="max-w-3xl mx-auto text-center" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-cream leading-tight mb-6">
-            Ku çdo fshat tregon{" "}
-            <span className="italic text-seafoam">një histori</span>
+            {parts.length > 1 ? (
+              <>
+                {parts[0]}
+                <span className="italic text-seafoam">{parts[1]}</span>
+                {parts[2]}
+              </>
+            ) : (
+              headline
+            )}
           </h1>
           <p className="text-lg md:text-xl text-cream/70 max-w-2xl mx-auto mb-10 font-body">
-            Agritourism, local guides and thematic tours — everything to discover authentic Albania
+            {settings.hero_sub || "Agritourism, local guides and thematic tours — everything to discover authentic Albania"}
           </p>
 
           <motion.div

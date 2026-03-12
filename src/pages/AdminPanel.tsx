@@ -12,7 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import {
   BarChart3, Mountain, PartyPopper, Compass, ClipboardList,
-  ArrowLeft, Plus, Pencil, Trash2, Loader2,
+  ArrowLeft, Plus, Pencil, Trash2, Loader2, MessageCircle, Settings,
+  Pin, PinOff, Star, Eye, EyeOff,
 } from "lucide-react";
 
 // ── Types ───────────────────────────────────────────────
@@ -43,15 +44,21 @@ interface Booking {
   total_price: number | null; message: string | null; status: string;
   item_name: string | null; item_type: string | null;
 }
+interface ChatMsg {
+  id: string; created_at: string; username: string; country_flag: string;
+  message: string; is_admin: boolean; is_pinned: boolean; deleted: boolean;
+}
 
-type Tab = "dashboard" | "destinations" | "events" | "tours" | "bookings";
+type Tab = "dashboard" | "destinations" | "events" | "tours" | "bookings" | "chat" | "settings";
 
-const sidebarItems: { key: Tab; icon: React.ReactNode; label: string }[] = [
-  { key: "dashboard", icon: <BarChart3 className="h-5 w-5" />, label: "📊 Dashboard" },
-  { key: "destinations", icon: <Mountain className="h-5 w-5" />, label: "🏔️ Destinacione" },
-  { key: "events", icon: <PartyPopper className="h-5 w-5" />, label: "🎉 Evente" },
-  { key: "tours", icon: <Compass className="h-5 w-5" />, label: "🧭 Ture" },
-  { key: "bookings", icon: <ClipboardList className="h-5 w-5" />, label: "📋 Rezervime" },
+const sidebarItems: { key: Tab; label: string }[] = [
+  { key: "dashboard", label: "📊 Dashboard" },
+  { key: "destinations", label: "🏔️ Destinacione" },
+  { key: "events", label: "🎉 Evente" },
+  { key: "tours", label: "🧭 Ture" },
+  { key: "bookings", label: "📋 Rezervime" },
+  { key: "chat", label: "💬 Chat" },
+  { key: "settings", label: "⚙️ Cilësimet" },
 ];
 
 // ── Main Component ──────────────────────────────────────
@@ -65,6 +72,14 @@ const AdminPanel = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [tours, setTours] = useState<Tour[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+
+  // Chat
+  const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
+  const [showDeleted, setShowDeleted] = useState(false);
+
+  // Settings
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
+  const [savingSettings, setSavingSettings] = useState(false);
 
   // Modals
   const [editDest, setEditDest] = useState<Partial<Destination> | null>(null);
@@ -87,7 +102,29 @@ const AdminPanel = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchAll(); }, [fetchAll]);
+  const fetchChat = useCallback(async () => {
+    // Use 'as any' because chat_messages may not be in generated types yet
+    const { data } = await (supabase.from("chat_messages" as any).select("*").order("created_at", { ascending: false }).limit(200) as any);
+    if (data) setChatMessages(data as ChatMsg[]);
+  }, []);
+
+  const fetchSettings = useCallback(async () => {
+    const { data } = await (supabase.from("site_settings" as any).select("key, value") as any);
+    if (data) {
+      const map: Record<string, string> = {};
+      (data as any[]).forEach((r) => { map[r.key] = r.value || ""; });
+      setSiteSettings(map);
+    }
+  }, []);
+
+  useEffect(() => { fetchAll(); fetchChat(); fetchSettings(); }, [fetchAll, fetchChat, fetchSettings]);
+
+  // Auto-refresh chat every 30s
+  useEffect(() => {
+    if (tab !== "chat") return;
+    const interval = setInterval(fetchChat, 30000);
+    return () => clearInterval(interval);
+  }, [tab, fetchChat]);
 
   // ── CRUD helpers ────────────────────────────────────
   const saveDest = async () => {
@@ -154,7 +191,49 @@ const AdminPanel = () => {
     else { toast.success(`Statusi: ${status}`); fetchAll(); }
   };
 
+  // ── Chat admin helpers ──────────────────────────────
+  const togglePin = async (id: string, pinned: boolean) => {
+    await (supabase.from("chat_messages" as any).update({ is_pinned: !pinned }).eq("id", id) as any);
+    fetchChat();
+  };
+  const softDelete = async (id: string) => {
+    await (supabase.from("chat_messages" as any).update({ deleted: true }).eq("id", id) as any);
+    toast.success("Mesazhi u fshi"); fetchChat();
+  };
+  const markAdmin = async (id: string) => {
+    await (supabase.from("chat_messages" as any).update({ is_admin: true }).eq("id", id) as any);
+    toast.success("Marked as admin"); fetchChat();
+  };
+  const clearAll = async () => {
+    if (!confirm("Jeni të sigurt? Kjo do fshijë të gjitha mesazhet.")) return;
+    await (supabase.from("chat_messages" as any).update({ deleted: true }).neq("id", "00000000-0000-0000-0000-000000000000") as any);
+    toast.success("Të gjitha mesazhet u fshinë"); fetchChat();
+  };
+
+  // ── Settings helpers ────────────────────────────────
+  const updateSetting = (key: string, value: string) => {
+    setSiteSettings((prev) => ({ ...prev, [key]: value }));
+  };
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    for (const [key, value] of Object.entries(siteSettings)) {
+      await (supabase.from("site_settings" as any).upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" }) as any);
+    }
+    toast.success("Cilësimet u ruajtën!");
+    setSavingSettings(false);
+  };
+
   const pendingBookings = bookings.filter((b) => b.status === "pending").length;
+  const totalChat = chatMessages.length;
+  const deletedChat = chatMessages.filter((m) => m.deleted).length;
+  const pinnedChat = chatMessages.filter((m) => m.is_pinned).length;
+  const todayChat = chatMessages.filter((m) => {
+    const d = new Date(m.created_at);
+    const today = new Date();
+    return d.toDateString() === today.toDateString();
+  }).length;
+
+  const filteredChat = showDeleted ? chatMessages : chatMessages.filter((m) => !m.deleted);
 
   // ── Render ──────────────────────────────────────────
   return (
@@ -201,12 +280,14 @@ const AdminPanel = () => {
             {tab === "dashboard" && (
               <div>
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Dashboard</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
                   {[
                     { label: "Destinacione", value: destinations.length, emoji: "🏔️" },
                     { label: "Evente", value: events.filter((e) => e.status === "upcoming").length, emoji: "🎉" },
                     { label: "Ture", value: tours.length, emoji: "🧭" },
                     { label: "Rezervime Pending", value: pendingBookings, emoji: "📋" },
+                    { label: "Mesazhe Chat", value: totalChat - deletedChat, emoji: "💬" },
+                    { label: "Mesazhe Sot", value: todayChat, emoji: "📅" },
                   ].map((s) => (
                     <div key={s.label} className="bg-white rounded-xl p-6 shadow-sm border border-border">
                       <p className="text-3xl mb-2">{s.emoji}</p>
@@ -231,15 +312,9 @@ const AdminPanel = () => {
                   <Table>
                     <TableHeader>
                       <TableRow style={{ backgroundColor: "#D4EDE0" }}>
-                        <TableHead></TableHead>
-                        <TableHead>Emri</TableHead>
-                        <TableHead>Zona</TableHead>
-                        <TableHead>Lloji</TableHead>
-                        <TableHead>Çmimi</TableHead>
-                        <TableHead>Rating</TableHead>
-                        <TableHead>Featured</TableHead>
-                        <TableHead>Statusi</TableHead>
-                        <TableHead>Veprimet</TableHead>
+                        <TableHead></TableHead><TableHead>Emri</TableHead><TableHead>Zona</TableHead>
+                        <TableHead>Lloji</TableHead><TableHead>Çmimi</TableHead><TableHead>Rating</TableHead>
+                        <TableHead>Featured</TableHead><TableHead>Statusi</TableHead><TableHead>Veprimet</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -282,15 +357,9 @@ const AdminPanel = () => {
                   <Table>
                     <TableHeader>
                       <TableRow style={{ backgroundColor: "#D4EDE0" }}>
-                        <TableHead></TableHead>
-                        <TableHead>Titulli</TableHead>
-                        <TableHead>Lloji</TableHead>
-                        <TableHead>Data Fillimit</TableHead>
-                        <TableHead>Lokacioni</TableHead>
-                        <TableHead>Çmimi</TableHead>
-                        <TableHead>Featured</TableHead>
-                        <TableHead>Statusi</TableHead>
-                        <TableHead>Veprimet</TableHead>
+                        <TableHead></TableHead><TableHead>Titulli</TableHead><TableHead>Lloji</TableHead>
+                        <TableHead>Data Fillimit</TableHead><TableHead>Lokacioni</TableHead><TableHead>Çmimi</TableHead>
+                        <TableHead>Featured</TableHead><TableHead>Statusi</TableHead><TableHead>Veprimet</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -333,15 +402,9 @@ const AdminPanel = () => {
                   <Table>
                     <TableHeader>
                       <TableRow style={{ backgroundColor: "#D4EDE0" }}>
-                        <TableHead></TableHead>
-                        <TableHead>Titulli</TableHead>
-                        <TableHead>Kategoria</TableHead>
-                        <TableHead>Çmimi</TableHead>
-                        <TableHead>Kohëzgjatja</TableHead>
-                        <TableHead>Vështirësia</TableHead>
-                        <TableHead>Zona</TableHead>
-                        <TableHead>Statusi</TableHead>
-                        <TableHead>Veprimet</TableHead>
+                        <TableHead></TableHead><TableHead>Titulli</TableHead><TableHead>Kategoria</TableHead>
+                        <TableHead>Çmimi</TableHead><TableHead>Kohëzgjatja</TableHead><TableHead>Vështirësia</TableHead>
+                        <TableHead>Zona</TableHead><TableHead>Statusi</TableHead><TableHead>Veprimet</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -379,15 +442,9 @@ const AdminPanel = () => {
                   <Table>
                     <TableHeader>
                       <TableRow style={{ backgroundColor: "#D4EDE0" }}>
-                        <TableHead>Data</TableHead>
-                        <TableHead>Emri</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Destinacioni</TableHead>
-                        <TableHead>Check-in</TableHead>
-                        <TableHead>Check-out</TableHead>
-                        <TableHead>Persona</TableHead>
-                        <TableHead>Totali</TableHead>
-                        <TableHead>Statusi</TableHead>
+                        <TableHead>Data</TableHead><TableHead>Emri</TableHead><TableHead>Email</TableHead>
+                        <TableHead>Destinacioni</TableHead><TableHead>Check-in</TableHead><TableHead>Check-out</TableHead>
+                        <TableHead>Persona</TableHead><TableHead>Totali</TableHead><TableHead>Statusi</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -424,6 +481,131 @@ const AdminPanel = () => {
                       )}
                     </TableBody>
                   </Table>
+                </div>
+              </div>
+            )}
+
+            {/* Chat Admin Tab */}
+            {tab === "chat" && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Chat Moderation</h2>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-muted-foreground">Total: {totalChat}</span>
+                      <span className="text-muted-foreground">Fshira: {deletedChat}</span>
+                      <span className="text-muted-foreground">📌 {pinnedChat}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch checked={showDeleted} onCheckedChange={setShowDeleted} />
+                      <Label className="text-sm">Shfaq të fshirat</Label>
+                    </div>
+                    <Button variant="destructive" size="sm" onClick={clearAll}>
+                      <Trash2 className="h-4 w-4 mr-1" /> Pastro të gjitha
+                    </Button>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl border border-border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow style={{ backgroundColor: "#D4EDE0" }}>
+                        <TableHead>🏳️</TableHead><TableHead>Përdoruesi</TableHead><TableHead>Mesazhi</TableHead>
+                        <TableHead>Ora</TableHead><TableHead>Status</TableHead><TableHead>Veprimet</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredChat.map((m) => (
+                        <TableRow key={m.id} className={m.deleted ? "opacity-40" : ""}>
+                          <TableCell>{m.country_flag}</TableCell>
+                          <TableCell className="font-medium">
+                            {m.username}
+                            {m.is_admin && <span className="ml-1 text-xs bg-yellow-400/80 text-yellow-900 px-1.5 rounded font-bold">⭐</span>}
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">{m.message}</TableCell>
+                          <TableCell className="text-xs">{new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</TableCell>
+                          <TableCell>
+                            {m.deleted && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">Fshirë</span>}
+                            {m.is_pinned && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">📌 Pinned</span>}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="icon" onClick={() => togglePin(m.id, m.is_pinned)} title={m.is_pinned ? "Unpin" : "Pin"}>
+                                {m.is_pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+                              </Button>
+                              {!m.deleted && (
+                                <Button variant="ghost" size="icon" onClick={() => softDelete(m.id)} title="Fshi">
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              )}
+                              {!m.is_admin && (
+                                <Button variant="ghost" size="icon" onClick={() => markAdmin(m.id)} title="Mark Admin">
+                                  <Star className="h-4 w-4 text-yellow-500" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {filteredChat.length === 0 && (
+                        <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nuk ka mesazhe.</TableCell></TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+
+            {/* Settings Tab */}
+            {tab === "settings" && (
+              <div>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Cilësimet e Sajtit</h2>
+                <div className="bg-white rounded-xl border border-border p-6 max-w-2xl space-y-5">
+                  <div>
+                    <Label>Hero Headline</Label>
+                    <Input value={siteSettings.hero_headline || ""} onChange={(e) => updateSetting("hero_headline", e.target.value)} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label>Hero Subheadline</Label>
+                    <Input value={siteSettings.hero_sub || ""} onChange={(e) => updateSetting("hero_sub", e.target.value)} className="mt-1" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Newsletter Subscriber Count</Label>
+                      <Input type="number" value={siteSettings.subscriber_count || ""} onChange={(e) => updateSetting("subscriber_count", e.target.value)} className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Online Chat Label</Label>
+                      <Input value={siteSettings.online_label || ""} onChange={(e) => updateSetting("online_label", e.target.value)} className="mt-1" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>WhatsApp</Label>
+                      <Input value={siteSettings.whatsapp || ""} onChange={(e) => updateSetting("whatsapp", e.target.value)} className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Email Contact</Label>
+                      <Input value={siteSettings.email || ""} onChange={(e) => updateSetting("email", e.target.value)} className="mt-1" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3">
+                      <Switch checked={siteSettings.show_events === "true"} onCheckedChange={(v) => updateSetting("show_events", v ? "true" : "false")} />
+                      <Label>Shfaq Events Section</Label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch checked={siteSettings.show_guides === "true"} onCheckedChange={(v) => updateSetting("show_guides", v ? "true" : "false")} />
+                      <Label>Shfaq Guides Section</Label>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Maintenance Mode Message (bosh = çaktivizuar)</Label>
+                    <Textarea value={siteSettings.maintenance_message || ""} onChange={(e) => updateSetting("maintenance_message", e.target.value)} rows={2} className="mt-1" placeholder="Sajti është në mirëmbajtje..." />
+                  </div>
+                  <Button onClick={saveSettings} disabled={savingSettings} className="bg-forest hover:bg-pine text-cream">
+                    {savingSettings ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                    Ruaj Ndryshimet
+                  </Button>
                 </div>
               </div>
             )}
