@@ -51,9 +51,7 @@ const CommunityChat = () => {
         { event: "INSERT", schema: "public", table: "chat_messages" },
         (payload) => {
           const newMsg = payload.new as ChatMessage;
-          if (!newMsg.deleted) {
-            setMessages((prev) => [...prev, newMsg]);
-          }
+          setMessages((prev) => [...prev, newMsg]);
         }
       )
       .subscribe();
