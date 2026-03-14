@@ -1,18 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { LogIn, User, LayoutDashboard, ShieldCheck, LogOut, CalendarDays, X, Menu, UserCircle, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
-
-const navLinks = [
-  { label: "Destinacione", href: "/destinations" },
-  { label: "Turne", href: "/tours" },
-  { label: "Guida", href: "/guides" },
-  { label: "Shërbime", href: "/services" },
-  { label: "Rreth Nesh", href: "/about" },
-  { label: "Kontakt", href: "/contact" },
-];
+import LanguageToggle from "./LanguageToggle";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -21,8 +14,18 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, hasRole, signOut, loading } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const navLinks = [
+    { label: t("nav.destinations"), href: "/destinations" },
+    { label: t("nav.tours"), href: "/tours" },
+    { label: t("nav.guides"), href: "/guides" },
+    { label: t("nav.services"), href: "/services" },
+    { label: t("nav.about"), href: "/about" },
+    { label: t("nav.contact"), href: "/contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -35,7 +38,6 @@ const Navbar = () => {
     setDropdownOpen(false);
   }, [location.pathname]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -88,6 +90,8 @@ const Navbar = () => {
               </Link>
             ))}
 
+            <LanguageToggle transparent={showTransparent} />
+
             {!loading && user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -120,10 +124,10 @@ const Navbar = () => {
                       </div>
 
                       <Link to="/my-bookings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors">
-                        <CalendarDays className="h-4 w-4 text-muted-foreground" /> Rezervimet e mia
+                        <CalendarDays className="h-4 w-4 text-muted-foreground" /> {t("nav.mybookings")}
                       </Link>
                       <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors">
-                        <UserCircle className="h-4 w-4 text-muted-foreground" /> Profili im
+                        <UserCircle className="h-4 w-4 text-muted-foreground" /> {t("nav.profile")}
                       </Link>
 
                       {hasRole("owner") && (
@@ -142,7 +146,7 @@ const Navbar = () => {
                           onClick={handleSignOut}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors w-full text-left"
                         >
-                          <LogOut className="h-4 w-4" /> Dil nga llogaria
+                          <LogOut className="h-4 w-4" /> {t("nav.signout")}
                         </button>
                       </div>
                     </motion.div>
@@ -155,13 +159,13 @@ const Navbar = () => {
                   onClick={() => setAuthModal("signin")}
                   className={`text-sm font-medium transition-colors hover:text-seafoam ${showTransparent ? "text-cream/80" : "text-foreground"}`}
                 >
-                  Hyr
+                  {t("nav.signin")}
                 </button>
                 <button
                   onClick={() => setAuthModal("signup")}
                   className="rounded-full bg-seafoam/90 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-seafoam flex items-center gap-1.5"
                 >
-                  <LogIn className="h-3.5 w-3.5" /> Regjistrohu
+                  <LogIn className="h-3.5 w-3.5" /> {t("nav.signup")}
                 </button>
               </div>
             ) : null}
@@ -199,6 +203,8 @@ const Navbar = () => {
 
               <div className="w-16 h-px bg-cream/20 my-2" />
 
+              <LanguageToggle transparent={true} />
+
               {user ? (
                 <>
                   <div className="flex items-center gap-3 mb-2">
@@ -210,12 +216,12 @@ const Navbar = () => {
                       <p className="text-cream/50 text-xs">{user.email}</p>
                     </div>
                   </div>
-                  <Link to="/my-bookings" className="text-lg text-cream/80 hover:text-cream font-medium">📅 Rezervimet</Link>
-                  <Link to="/profile" className="text-lg text-cream/80 hover:text-cream font-medium">👤 Profili</Link>
+                  <Link to="/my-bookings" className="text-lg text-cream/80 hover:text-cream font-medium">📅 {t("nav.mybookings")}</Link>
+                  <Link to="/profile" className="text-lg text-cream/80 hover:text-cream font-medium">👤 {t("nav.profile")}</Link>
                   {hasRole("owner") && <Link to="/dashboard" className="text-lg text-cream/80 hover:text-cream font-medium">🏠 Dashboard</Link>}
                   {hasRole("admin") && <Link to="/admin" className="text-lg text-cream/80 hover:text-cream font-medium">⚙️ Admin</Link>}
                   <button onClick={handleSignOut} className="mt-2 rounded-full bg-destructive/20 px-8 py-3 text-cream font-semibold hover:bg-destructive/30 transition-colors">
-                    Dil
+                    {t("nav.signout")}
                   </button>
                 </>
               ) : (
@@ -224,13 +230,13 @@ const Navbar = () => {
                     onClick={() => { setMobileOpen(false); setAuthModal("signin"); }}
                     className="text-lg text-cream/80 hover:text-cream font-medium"
                   >
-                    Hyr
+                    {t("nav.signin")}
                   </button>
                   <button
                     onClick={() => { setMobileOpen(false); setAuthModal("signup"); }}
                     className="rounded-full bg-seafoam/90 px-8 py-3 text-forest font-semibold hover:bg-seafoam transition-colors"
                   >
-                    Regjistrohu
+                    {t("nav.signup")}
                   </button>
                 </div>
               )}

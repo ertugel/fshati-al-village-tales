@@ -2,21 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-
-const stats = [
-  { value: "300+", label: "Destinacione" },
-  { value: "50+", label: "Guida Lokale" },
-  { value: "7", label: "Paketa Tematike" },
-  { value: "12K+", label: "Turistë/Vit" },
-];
-
-const typeOptions = [
-  { value: "agritourism", label: "Agroturizëm" },
-  { value: "boutique-hotel", label: "Boutique Hotel" },
-  { value: "wine-tasting", label: "Wine Tasting" },
-  { value: "day-tour", label: "Day Tour" },
-  { value: "package", label: "Paketë" },
-];
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Particle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
   <motion.div
@@ -34,6 +20,22 @@ const HeroSection = () => {
   const [type, setType] = useState("");
   const navigate = useNavigate();
   const { settings } = useSiteSettings();
+  const { t, lang } = useLanguage();
+
+  const stats = [
+    { value: "300+", label: t("stats.destinations") },
+    { value: "50+", label: t("stats.guides") },
+    { value: "7", label: t("stats.packages") },
+    { value: "12K+", label: t("stats.tourists") },
+  ];
+
+  const typeOptions = [
+    { value: "agritourism", label: t("hero.type.agritourism") },
+    { value: "boutique-hotel", label: t("hero.type.boutique") },
+    { value: "wine-tasting", label: t("hero.type.wine") },
+    { value: "day-tour", label: t("hero.type.daytour") },
+    { value: "package", label: t("hero.type.package") },
+  ];
 
   useEffect(() => {
     setParticles(
@@ -54,9 +56,17 @@ const HeroSection = () => {
     navigate(`/destinations?${params.toString()}`);
   };
 
-  // Parse headline to keep the italic part
-  const headline = settings.hero_headline || "Ku çdo fshat tregon një histori";
-  const parts = headline.split(/(një histori)/i);
+  // Use site settings if available, otherwise use translation
+  const headline = settings.hero_headline && settings.hero_headline !== "Ku çdo fshat tregon një histori"
+    ? settings.hero_headline
+    : t("hero.headline");
+  const subtext = settings.hero_sub && settings.hero_sub !== "Agroturizme, guida lokale dhe ture tematike"
+    ? settings.hero_sub
+    : t("hero.sub");
+
+  // Italic highlight for both languages
+  const italicWord = lang === "sq" ? "një histori" : "a story";
+  const parts = headline.split(new RegExp(`(${italicWord})`, "i"));
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero">
@@ -85,7 +95,7 @@ const HeroSection = () => {
             )}
           </h1>
           <p className="text-lg md:text-xl text-cream/70 max-w-2xl mx-auto mb-10 font-body">
-            {settings.hero_sub || "Agritourism, local guides and thematic tours — everything to discover authentic Albania"}
+            {subtext}
           </p>
 
           <motion.div
@@ -96,7 +106,7 @@ const HeroSection = () => {
           >
             <input
               type="text"
-              placeholder="🏔️ Destinacioni..."
+              placeholder={t("hero.search_placeholder")}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -113,7 +123,7 @@ const HeroSection = () => {
               onChange={(e) => setType(e.target.value)}
               className="flex-1 rounded-xl bg-background px-4 py-3 text-sm text-foreground outline-none border border-border focus:ring-2 focus:ring-sage/50 appearance-none"
             >
-              <option value="">Lloji...</option>
+              <option value="">{t("hero.search_type")}</option>
               {typeOptions.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
@@ -122,7 +132,7 @@ const HeroSection = () => {
               onClick={handleSearch}
               className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap"
             >
-              Kërko
+              {t("hero.search_btn")}
             </button>
           </motion.div>
 
