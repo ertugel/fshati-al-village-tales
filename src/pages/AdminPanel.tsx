@@ -599,6 +599,16 @@ const AdminPanel = () => {
                     </div>
                   </div>
                   <div>
+                    <Label>Default Language</Label>
+                    <Select value={siteSettings.default_language || "sq"} onValueChange={(v) => updateSetting("default_language", v)}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sq">🇦🇱 Shqip (SQ)</SelectItem>
+                        <SelectItem value="en">🇬🇧 English (EN)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
                     <Label>Maintenance Mode Message (bosh = çaktivizuar)</Label>
                     <Textarea value={siteSettings.maintenance_message || ""} onChange={(e) => updateSetting("maintenance_message", e.target.value)} rows={2} className="mt-1" placeholder="Sajti është në mirëmbajtje..." />
                   </div>
