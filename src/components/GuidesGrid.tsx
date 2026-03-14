@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/hooks/useLanguage";
 import BookingModal from "./BookingModal";
 
 interface Guide {
-  id: string;
-  avatar: string;
-  name: string;
-  specialization: string;
-  languages: string;
-  zones: string;
-  price: string;
-  priceNum: number;
+  id: string; avatar: string; name: string; specialization: string;
+  languages: string; zones: string; price: string; priceNum: number;
 }
 
 const guides: Guide[] = [
@@ -27,13 +22,14 @@ const guides: Guide[] = [
 
 const GuidesGrid = () => {
   const [booking, setBooking] = useState<{ id: string; type: "guide"; name: string; price: number } | null>(null);
+  const { t } = useLanguage();
 
   return (
     <section id="guides" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-3">Guida Lokale</h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">Certified local guides who bring Albanian stories to life</p>
+          <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-3">{t("sections.guides_title")}</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto">{t("sections.guides_sub")}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -50,11 +46,9 @@ const GuidesGrid = () => {
                     <span className="text-base font-bold text-forest">{g.price}</span>
                   </div>
                 </Link>
-                <button
-                  onClick={() => setBooking({ id: g.id, type: "guide", name: g.name, price: g.priceNum })}
-                  className="w-full text-sm font-semibold text-cream bg-forest hover:bg-pine px-4 py-2 rounded-full transition-colors"
-                >
-                  Book Guide
+                <button onClick={() => setBooking({ id: g.id, type: "guide", name: g.name, price: g.priceNum })}
+                  className="w-full text-sm font-semibold text-cream bg-forest hover:bg-pine px-4 py-2 rounded-full transition-colors">
+                  {t("guides.book")}
                 </button>
               </div>
             </motion.div>
@@ -63,14 +57,11 @@ const GuidesGrid = () => {
 
         <div className="text-center mt-10">
           <Link to="/guides" className="inline-block rounded-full bg-forest px-8 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors">
-            Shiko të gjithë guidat →
+            {t("guides.view_all")}
           </Link>
         </div>
       </div>
-
-      {booking && (
-        <BookingModal open={!!booking} onClose={() => setBooking(null)} item={booking} />
-      )}
+      {booking && <BookingModal open={!!booking} onClose={() => setBooking(null)} item={booking} />}
     </section>
   );
 };

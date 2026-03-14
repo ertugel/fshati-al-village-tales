@@ -1,47 +1,44 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-const columns = [
-  {
-    title: "Discover",
-    links: [
-      { label: "Destinations", href: "/destinations" },
-      { label: "Day Tours", href: "/tours" },
-      { label: "Local Guides", href: "/guides" },
-      { label: "Thematic Packages", href: "/home#packages" },
-    ],
-  },
-  {
-    title: "Services",
-    links: [
-      { label: "Car Rental", href: "/services" },
-      { label: "eSIM & Internet", href: "/services" },
-      { label: "Travel Insurance", href: "/services" },
-      { label: "Airport Transfer", href: "/services" },
-    ],
-  },
-  {
-    title: "About",
-    links: [
-      { label: "Our Story", href: "/about" },
-      { label: "Contact Us", href: "/contact" },
-    ],
-  },
-];
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [clicks, setClicks] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
+  const columns = [
+    {
+      title: t("footer.discover"),
+      links: [
+        { label: t("footer.destinations"), href: "/destinations" },
+        { label: t("footer.daytours"), href: "/tours" },
+        { label: t("footer.local_guides"), href: "/guides" },
+        { label: t("footer.packages"), href: "/home#packages" },
+      ],
+    },
+    {
+      title: t("footer.services_title"),
+      links: [
+        { label: "Car Rental", href: "/services" },
+        { label: "eSIM & Internet", href: "/services" },
+        { label: "Travel Insurance", href: "/services" },
+        { label: "Airport Transfer", href: "/services" },
+      ],
+    },
+    {
+      title: t("footer.about_title"),
+      links: [
+        { label: t("footer.our_story"), href: "/about" },
+        { label: t("footer.contact_us"), href: "/contact" },
+      ],
+    },
+  ];
+
   const handleCopyrightClick = () => {
     const next = clicks + 1;
-    if (next >= 3) {
-      setClicks(0);
-      clearTimeout(timerRef.current);
-      navigate("/admin");
-      return;
-    }
+    if (next >= 3) { setClicks(0); clearTimeout(timerRef.current); navigate("/admin"); return; }
     setClicks(next);
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => setClicks(0), 1500);
@@ -54,44 +51,27 @@ const Footer = () => {
           <div>
             <Link to="/home" className="flex items-center gap-2 mb-4">
               <span className="text-2xl">🏔️</span>
-              <span className="font-heading text-2xl font-bold">
-                Fshati<span className="text-seafoam">.al</span>
-              </span>
+              <span className="font-heading text-2xl font-bold">Fshati<span className="text-seafoam">.al</span></span>
             </Link>
-            <p className="text-sm text-cream/60 leading-relaxed">
-              Albania's first rural tourism marketplace — connecting travelers with authentic village experiences, local guides, and curated adventures since 2025.
-            </p>
+            <p className="text-sm text-cream/60 leading-relaxed">{t("footer.description")}</p>
           </div>
-
           {columns.map((col) => (
             <div key={col.title}>
               <h4 className="font-heading text-lg font-bold mb-4">{col.title}</h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link to={link.href} className="text-sm text-cream/60 hover:text-seafoam transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
+                  <li key={link.label}><Link to={link.href} className="text-sm text-cream/60 hover:text-seafoam transition-colors">{link.label}</Link></li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
       </div>
-
       <div className="border-t border-cream/10">
         <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p
-            className="text-xs text-cream/40 cursor-default select-none"
-            onClick={handleCopyrightClick}
-          >
-            © 2025 Fshati.al · Startup Albania 2025
-          </p>
+          <p className="text-xs text-cream/40 cursor-default select-none" onClick={handleCopyrightClick}>© 2025 Fshati.al · Startup Albania 2025</p>
           <div className="flex gap-4">
-            {["🤝 ATOA Partner", "✅ GDPR"].map((badge) => (
-              <span key={badge} className="text-xs text-cream/40">{badge}</span>
-            ))}
+            {["🤝 ATOA Partner", "✅ GDPR"].map((badge) => <span key={badge} className="text-xs text-cream/40">{badge}</span>)}
           </div>
         </div>
       </div>
