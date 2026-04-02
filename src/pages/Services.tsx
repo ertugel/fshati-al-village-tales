@@ -122,8 +122,8 @@ const translations: Record<string, Record<string, string>> = {
 };
 
 const Services = () => {
-  const { language } = useLanguage();
-  const t = (key: string) => translations[language]?.[key] || translations.sq[key] || key;
+  const { lang } = useLanguage();
+  const t = (key: string) => translations[lang]?.[key] || translations.sq[key] || key;
 
   return (
     <div className="min-h-screen bg-background">
