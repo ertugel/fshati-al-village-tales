@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
+import SEOHead from "@/components/SEOHead";
 
 const destinations: Record<string, {
   emoji: string; title: string; location: string; description: string; longDescription: string;
