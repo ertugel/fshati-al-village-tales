@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { SlidersHorizontal, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const destinations = [
   { id: "theth-alps", emoji: "🏔️", title: "Theth Alps", location: "Shkodër", description: "Pristine mountain village with the iconic Blue Eye waterfall and Lock-in Tower.", price: 45, rating: 4.9, badge: "Bestseller", tags: ["Hiking", "Nature", "Village"], type: "agritourism", difficulty: "hard" },
