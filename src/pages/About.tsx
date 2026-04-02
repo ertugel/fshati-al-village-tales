@@ -29,6 +29,11 @@ const team = [
 const About = () => {
   return (
   <div className="min-h-screen bg-background">
+    <SEOHead
+      title="Rreth Nesh — Fshati.al | Albania Rural Tourism Platform"
+      description="Fshati.al është platforma e parë shqiptare e turizmit rural. Misioni: të lidhë turistët me familjet e fshatrave shqiptare."
+      path="/about"
+    />
     <Navbar />
 
     {/* Hero */}
