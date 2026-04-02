@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
-import usePageMeta from "@/hooks/usePageMeta";
+import SEOHead from "@/components/SEOHead";
 
 const steps = [
   { icon: Search, title: "Search", description: "Browse 300+ authentic rural destinations, local guides, and curated tours across Albania." },
@@ -27,7 +27,6 @@ const team = [
 ];
 
 const About = () => {
-  usePageMeta("About — Fshati.al");
   return (
   <div className="min-h-screen bg-background">
     <Navbar />
