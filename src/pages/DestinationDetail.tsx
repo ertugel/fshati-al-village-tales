@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
+import SEOHead from "@/components/SEOHead";
 
 const destinations: Record<string, {
   emoji: string; title: string; location: string; description: string; longDescription: string;
@@ -115,6 +116,20 @@ const DestinationDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${dest.title} — ${dest.location} | Fshati.al`}
+        description={dest.longDescription.substring(0, 155)}
+        path={`/destination/${id}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "LodgingBusiness",
+          "name": dest.title,
+          "description": dest.description,
+          "address": { "@type": "PostalAddress", "addressLocality": dest.location, "addressCountry": "AL" },
+          "priceRange": `€${dest.price}`,
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": dest.rating, "reviewCount": 12 }
+        }}
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">

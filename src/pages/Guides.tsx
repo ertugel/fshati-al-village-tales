@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const guides = [
   { id: "mikel-gashi", avatar: "🧔", name: "Mikel Gashi", specialization: "Hiking & Alps", languages: "🇦🇱 🇬🇧 🇩🇪", zones: "Theth, Valbona", price: "€60-80/day", rating: 4.9 },
@@ -16,6 +17,11 @@ const guides = [
 
 const Guides = () => (
   <div className="min-h-screen bg-background">
+    <SEOHead
+      title="Guida Lokale Shqipëri — Certifikuar ATOA | Fshati.al"
+      description="50+ guida lokale të certifikuara. Alpinizëm, UNESCO, Wine Tours, Adventure. Rezervo guidën tënde nga €60/ditë."
+      path="/guides"
+    />
     <Navbar />
     <div className="pt-24 pb-20">
       <div className="container mx-auto px-4">

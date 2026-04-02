@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const benefits = [
   { icon: BadgeCheck, title: "Free Listing", description: "No upfront costs. List your property and start receiving bookings at zero cost to you." },
@@ -32,6 +33,11 @@ const BecomePartner = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Bëhu Partner — Lista Falas | Fshati.al"
+        description="Lista biznesin tuaj turistik falas. Agroturizme, hotele, kantina, guida. 90% të ardhurave direkt tek ju. 12,000+ turistë/vit."
+        path="/become-a-partner"
+      />
       <Navbar />
 
       {/* Hero */}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const tabs = [
   { key: "all", label: "Të gjitha" },
@@ -55,6 +56,11 @@ const Tours = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Ture në Shqipëri — 1 deri 11 Ditë | Fshati.al"
+        description="Ture të guiduara nga Theth, Berat, Gjirokastra dhe Riviera. Çmime nga €15. Guida lokale të certifikuara ATOA."
+        path="/tours"
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { SlidersHorizontal, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const destinations = [
   { id: "theth-alps", emoji: "🏔️", title: "Theth Alps", location: "Shkodër", description: "Pristine mountain village with the iconic Blue Eye waterfall and Lock-in Tower.", price: 45, rating: 4.9, badge: "Bestseller", tags: ["Hiking", "Nature", "Village"], type: "agritourism", difficulty: "hard" },
@@ -201,6 +202,11 @@ const Destinations = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Destinacione — Agroturizme & Hotele | Fshati.al"
+        description="300+ destinacione rurali në Shqipëri. Agroturizme, hotele boutique, kantina verërash. UNESCO Berat, Alpet e Thethit, Riviera Jonike."
+        path="/destinations"
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">

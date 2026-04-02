@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
-import usePageMeta from "@/hooks/usePageMeta";
+import SEOHead from "@/components/SEOHead";
 
 const infoCards = [
   { icon: Mail, label: "Email", value: "hello@fshati.al" },
@@ -26,7 +26,6 @@ const faqs = [
 ];
 
 const Contact = () => {
-  usePageMeta("Contact — Fshati.al");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,6 +40,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Kontakt — Fshati.al | +355683693272"
+        description="Na kontaktoni për rezervime, partneritet ose pyetje. WhatsApp: +355683693272. Email: hello@fshati.al"
+        path="/contact"
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">
