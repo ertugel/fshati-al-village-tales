@@ -33,6 +33,11 @@ const BecomePartner = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Bëhu Partner — Lista Falas | Fshati.al"
+        description="Lista biznesin tuaj turistik falas. Agroturizme, hotele, kantina, guida. 90% të ardhurave direkt tek ju. 12,000+ turistë/vit."
+        path="/become-a-partner"
+      />
       <Navbar />
 
       {/* Hero */}

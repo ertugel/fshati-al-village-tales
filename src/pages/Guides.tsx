@@ -17,6 +17,11 @@ const guides = [
 
 const Guides = () => (
   <div className="min-h-screen bg-background">
+    <SEOHead
+      title="Guida Lokale Shqipëri — Certifikuar ATOA | Fshati.al"
+      description="50+ guida lokale të certifikuara. Alpinizëm, UNESCO, Wine Tours, Adventure. Rezervo guidën tënde nga €60/ditë."
+      path="/guides"
+    />
     <Navbar />
     <div className="pt-24 pb-20">
       <div className="container mx-auto px-4">
