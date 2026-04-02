@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
+import SEOHead from "@/components/SEOHead";
 
 const toursData: Record<string, {
   emoji: string; title: string; duration: string; price: number; priceLabel: string;
