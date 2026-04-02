@@ -38,7 +38,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <SEOHead
+        title="Fshati.al — Turizëm Rural Shqipëri | Albania Rural Tourism"
+        description="Zbulo 300+ agroturizme, guida lokale dhe ture tematike në Shqipëri. Nga Alpet e Thethit deri te Riviera Jonike. Rezervo sot."
+        keywords="turizem rural shqiperi, agrotourizm albania, theth tours, berat hotel, albania rural tourism, visit albania"
+        path="/"
+        jsonLd={jsonLd}
+      />
       <HeroSection />
       <CategoryStrip />
       <DestinationsGrid />
