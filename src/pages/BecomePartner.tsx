@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const benefits = [
   { icon: BadgeCheck, title: "Free Listing", description: "No upfront costs. List your property and start receiving bookings at zero cost to you." },
