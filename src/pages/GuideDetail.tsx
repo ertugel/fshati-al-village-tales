@@ -89,6 +89,11 @@ const GuideDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${guide.name} — ${guide.specialization} | Fshati.al`}
+        description={`Guidë lokale në ${guide.zones}. Çmimi nga €${guide.price}/ditë. ${guide.languages}`}
+        path={`/guide/${id}`}
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">

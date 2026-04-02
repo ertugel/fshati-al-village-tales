@@ -139,6 +139,19 @@ const TourDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${tour.title} — ${tour.duration} | Fshati.al`}
+        description={tour.longDescription.substring(0, 155)}
+        path={`/tour/${id}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "TouristTrip",
+          "name": tour.title,
+          "description": tour.description,
+          "touristType": "Cultural tourists",
+          "offers": { "@type": "Offer", "price": tour.price, "priceCurrency": "EUR" }
+        }}
+      />
       <Navbar />
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">
