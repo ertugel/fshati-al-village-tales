@@ -45,6 +45,7 @@ const Index = () => {
         path="/"
         jsonLd={jsonLd}
       />
+      <Navbar />
       <HeroSection />
       <CategoryStrip />
       <DestinationsGrid />
