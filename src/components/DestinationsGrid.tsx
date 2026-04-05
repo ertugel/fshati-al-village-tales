@@ -10,6 +10,7 @@ interface Destination {
   id: string; emoji: string; name: string; zone: string; description: string;
   price: number; price_unit: string; rating: number; review_count: number;
   badge: string | null; featured: boolean; image_gradient: string | null; type: string | null;
+  image_url: string | null;
 }
 
 const badgeColors: Record<string, string> = {
