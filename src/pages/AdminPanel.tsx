@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import {
   BarChart3, Mountain, PartyPopper, Compass, ClipboardList,
   ArrowLeft, Plus, Pencil, Trash2, Loader2, MessageCircle, Settings,
-  Pin, PinOff, Star, Eye, EyeOff,
+  Pin, PinOff, Star, Eye, EyeOff, Upload, Image,
 } from "lucide-react";
 
 // ── Types ───────────────────────────────────────────────
@@ -22,7 +22,7 @@ interface Destination {
   price: number | null; price_unit: string | null; description: string | null;
   emoji: string | null; badge: string | null; rating: number | null;
   review_count: number | null; featured: boolean | null; status: string | null;
-  image_gradient: string | null; created_at: string;
+  image_gradient: string | null; image_url: string | null; created_at: string;
 }
 interface Event {
   id: string; title: string; type: string | null; start_date: string;
@@ -235,6 +235,17 @@ const AdminPanel = () => {
 
   const filteredChat = showDeleted ? chatMessages : chatMessages.filter((m) => !m.deleted);
 
+  const handleImageUpload = async (destId: string, file: File) => {
+    const ext = file.name.split(".").pop();
+    const path = `destinations/${destId}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("fshati-images").upload(path, file, { upsert: true });
+    if (uploadError) { toast.error(uploadError.message); return; }
+    const { data: { publicUrl } } = supabase.storage.from("fshati-images").getPublicUrl(path);
+    const { error } = await supabase.from("destinations").update({ image_url: publicUrl } as any).eq("id", destId);
+    if (error) toast.error(error.message);
+    else { toast.success("Foto u ngarkua!"); fetchAll(); }
+  };
+
   // ── Render ──────────────────────────────────────────
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: "#F8F4ED" }}>
@@ -333,6 +344,10 @@ const AdminPanel = () => {
                           <TableCell>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => setEditDest(d)}><Pencil className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="relative" title="Upload foto">
+                                <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { if (e.target.files?.[0]) handleImageUpload(d.id, e.target.files[0]); }} />
+                                {(d as any).image_url ? <Image className="h-4 w-4 text-green-600" /> : <Upload className="h-4 w-4" />}
+                              </Button>
                               <Button variant="ghost" size="icon" onClick={() => setDeleteId({ table: "destinations", id: d.id })}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                             </div>
                           </TableCell>

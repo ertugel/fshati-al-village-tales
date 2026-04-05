@@ -8,10 +8,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { CalendarIcon, Info } from "lucide-react";
+import { CalendarIcon, Info, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/useLanguage";
+import { supabase } from "@/integrations/supabase/client";
+import { trackBookingOpen, trackBookingSubmit } from "@/lib/analytics";
+import { useEffect } from "react";
 
 interface BookingModalProps {
   open: boolean;
@@ -27,7 +30,12 @@ const BookingModal = ({ open, onClose, item }: BookingModalProps) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (open) trackBookingOpen(item.name, item.type);
+  }, [open, item.name, item.type]);
 
   const isAccommodation = item.type === "accommodation";
   const guestsNum = parseInt(guests) || 1;
@@ -35,13 +43,56 @@ const BookingModal = ({ open, onClose, item }: BookingModalProps) => {
     ? Math.max(1, Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))) : 1;
   const totalPrice = isAccommodation ? item.price * nights * guestsNum : item.price * guestsNum;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkIn) { toast.error(t("booking.error_date")); return; }
     if (isAccommodation && !checkOut) { toast.error(t("booking.error_checkout")); return; }
-    toast.success(t("booking.success"));
-    onClose();
-    setCheckIn(undefined); setCheckOut(undefined); setGuests("1"); setFullName(""); setEmail(""); setPhone(""); setNotes("");
+    
+    setSubmitting(true);
+    try {
+      const bookingId = crypto.randomUUID();
+      const bookingData = {
+        id: bookingId,
+        full_name: fullName,
+        email,
+        phone,
+        check_in: format(checkIn, "yyyy-MM-dd"),
+        check_out: checkOut ? format(checkOut, "yyyy-MM-dd") : null,
+        guests: guestsNum,
+        total_price: totalPrice,
+        notes,
+        item_id: item.id,
+        item_name: item.name,
+        item_type: item.type,
+        destination_name: item.name,
+        status: "pending",
+      };
+
+      const { error } = await supabase.from("bookings").insert(bookingData);
+      if (error) throw error;
+
+      // Send email notification (fire and forget)
+      supabase.functions.invoke("send-booking-email", {
+        body: {
+          fullName,
+          email,
+          destination: item.name,
+          checkIn: format(checkIn, "PPP"),
+          checkOut: checkOut ? format(checkOut, "PPP") : null,
+          guests: guestsNum,
+          totalPrice,
+        },
+      });
+
+      trackBookingSubmit(item.name, totalPrice);
+      toast.success(t("booking.success"));
+      onClose();
+      setCheckIn(undefined); setCheckOut(undefined); setGuests("1"); setFullName(""); setEmail(""); setPhone(""); setNotes("");
+    } catch (err: any) {
+      toast.error(err.message || "Error submitting booking");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -131,7 +182,10 @@ const BookingModal = ({ open, onClose, item }: BookingModalProps) => {
             </div>
           </div>
 
-          <Button type="submit" className="w-full">{t("booking.submit")}</Button>
+          <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {t("booking.submit")}
+          </Button>
 
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground text-center justify-center">
             <Info className="h-3.5 w-3.5" /> {t("booking.no_payment")}
