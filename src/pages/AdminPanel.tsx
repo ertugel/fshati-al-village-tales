@@ -344,6 +344,10 @@ const AdminPanel = () => {
                           <TableCell>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => setEditDest(d)}><Pencil className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="relative" title="Upload foto">
+                                <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { if (e.target.files?.[0]) handleImageUpload(d.id, e.target.files[0]); }} />
+                                {(d as any).image_url ? <Image className="h-4 w-4 text-green-600" /> : <Upload className="h-4 w-4" />}
+                              </Button>
                               <Button variant="ghost" size="icon" onClick={() => setDeleteId({ table: "destinations", id: d.id })}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                             </div>
                           </TableCell>
