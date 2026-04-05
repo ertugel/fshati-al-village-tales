@@ -235,6 +235,17 @@ const AdminPanel = () => {
 
   const filteredChat = showDeleted ? chatMessages : chatMessages.filter((m) => !m.deleted);
 
+  const handleImageUpload = async (destId: string, file: File) => {
+    const ext = file.name.split(".").pop();
+    const path = `destinations/${destId}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("fshati-images").upload(path, file, { upsert: true });
+    if (uploadError) { toast.error(uploadError.message); return; }
+    const { data: { publicUrl } } = supabase.storage.from("fshati-images").getPublicUrl(path);
+    const { error } = await supabase.from("destinations").update({ image_url: publicUrl } as any).eq("id", destId);
+    if (error) toast.error(error.message);
+    else { toast.success("Foto u ngarkua!"); fetchAll(); }
+  };
+
   // ── Render ──────────────────────────────────────────
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: "#F8F4ED" }}>
