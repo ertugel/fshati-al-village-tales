@@ -22,7 +22,7 @@ interface Destination {
   price: number | null; price_unit: string | null; description: string | null;
   emoji: string | null; badge: string | null; rating: number | null;
   review_count: number | null; featured: boolean | null; status: string | null;
-  image_gradient: string | null; created_at: string;
+  image_gradient: string | null; image_url: string | null; created_at: string;
 }
 interface Event {
   id: string; title: string; type: string | null; start_date: string;
