@@ -167,6 +167,7 @@ export type Database = {
           featured: boolean | null
           id: string
           image_gradient: string | null
+          image_url: string | null
           name: string
           price: number | null
           price_unit: string | null
@@ -184,6 +185,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_gradient?: string | null
+          image_url?: string | null
           name: string
           price?: number | null
           price_unit?: string | null
@@ -201,6 +203,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_gradient?: string | null
+          image_url?: string | null
           name?: string
           price?: number | null
           price_unit?: string | null
