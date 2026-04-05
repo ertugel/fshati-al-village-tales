@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import {
   BarChart3, Mountain, PartyPopper, Compass, ClipboardList,
   ArrowLeft, Plus, Pencil, Trash2, Loader2, MessageCircle, Settings,
-  Pin, PinOff, Star, Eye, EyeOff,
+  Pin, PinOff, Star, Eye, EyeOff, Upload, Image,
 } from "lucide-react";
 
 // ── Types ───────────────────────────────────────────────
