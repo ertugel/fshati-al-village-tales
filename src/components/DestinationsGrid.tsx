@@ -83,8 +83,12 @@ const DestinationsGrid = () => {
               <motion.div key={d.id} className={d.featured && i === 0 ? "md:col-span-2" : ""} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                 <div className="group rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-card-hover transition-all h-full flex flex-col">
                   <Link to={`/destination/${d.id}`}>
-                    <div className={`relative ${d.featured && i === 0 ? "h-64" : "h-48"} flex items-center justify-center`} style={{ background: d.image_gradient || "linear-gradient(135deg,#1a4a2e,#0d2b3e)" }}>
-                      <span className={`${d.featured && i === 0 ? "text-7xl" : "text-5xl"} group-hover:scale-110 transition-transform`}>{d.emoji}</span>
+                    <div className={`relative ${d.featured && i === 0 ? "h-64" : "h-48"} flex items-center justify-center overflow-hidden`} style={!d.image_url ? { background: d.image_gradient || "linear-gradient(135deg,#1a4a2e,#0d2b3e)" } : undefined}>
+                      {d.image_url ? (
+                        <img src={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                      ) : (
+                        <span className={`${d.featured && i === 0 ? "text-7xl" : "text-5xl"} group-hover:scale-110 transition-transform`}>{d.emoji}</span>
+                      )}
                       {d.badge && (
                         <span className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full ${badgeColors[d.badge] || "bg-muted text-foreground"}`}>{getBadgeLabel(d.badge)}</span>
                       )}
