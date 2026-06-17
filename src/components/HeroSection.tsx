@@ -100,41 +100,89 @@ const HeroSection = () => {
           </p>
 
           <motion.div
-            className="bg-card/95 backdrop-blur-md rounded-2xl p-3 shadow-card-hover flex flex-col md:flex-row gap-3 max-w-2xl mx-auto"
+            className="max-w-5xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <input
-              type="text"
-              placeholder={t("hero.search_placeholder")}
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="flex-1 rounded-xl bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-border focus:ring-2 focus:ring-sage/50"
-            />
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="flex-1 rounded-xl bg-background px-4 py-3 text-sm text-foreground outline-none border border-border focus:ring-2 focus:ring-sage/50"
-            />
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="flex-1 rounded-xl bg-background px-4 py-3 text-sm text-foreground outline-none border border-border focus:ring-2 focus:ring-sage/50 appearance-none"
-            >
-              <option value="">{t("hero.search_type")}</option>
-              {typeOptions.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-            <button
-              onClick={handleSearch}
-              className="rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-cream hover:bg-pine transition-colors whitespace-nowrap"
-            >
-              {t("hero.search_btn")}
-            </button>
+            <div className="relative group">
+              {/* Decorative glow */}
+              <div className="absolute -top-12 -left-12 w-48 h-48 bg-seafoam/10 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity duration-700" />
+              <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-sky/10 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity duration-700" />
+
+              <div className="relative bg-cream/10 backdrop-blur-2xl border border-cream/20 rounded-[2.5rem] shadow-[0_32px_80px_-20px_rgba(0,0,0,0.3)] p-2 flex flex-col md:flex-row items-center transition-all duration-500 hover:shadow-[0_48px_100px_-24px_rgba(0,0,0,0.4)]">
+
+                {/* Destination */}
+                <div className="flex-[1.5] w-full group/field relative flex flex-col justify-center px-6 md:px-8 py-4 rounded-[2.2rem] hover:bg-cream/5 transition-all duration-300">
+                  <label className="text-[10px] font-bold text-cream/50 uppercase tracking-[0.15em] mb-1 group-hover/field:text-seafoam transition-colors flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3" />
+                    {t("hero.where_label")}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t("hero.search_placeholder")}
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    className="bg-transparent border-none outline-none text-cream placeholder:text-cream/30 text-sm font-semibold w-full focus:ring-0 p-0"
+                  />
+                </div>
+
+                <div className="hidden md:block w-px h-12 bg-cream/10" />
+
+                {/* Date */}
+                <div className="flex-1 w-full group/field relative flex flex-col justify-center px-6 md:px-8 py-4 rounded-[2.2rem] hover:bg-cream/5 transition-all duration-300">
+                  <label className="text-[10px] font-bold text-cream/50 uppercase tracking-[0.15em] mb-1 group-hover/field:text-seafoam transition-colors flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3" />
+                    {t("hero.when_label")}
+                  </label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="bg-transparent border-none outline-none text-cream text-sm font-semibold w-full focus:ring-0 p-0 appearance-none"
+                    style={{ colorScheme: "dark" }}
+                  />
+                </div>
+
+                <div className="hidden md:block w-px h-12 bg-cream/10" />
+
+                {/* Category */}
+                <div className="flex-1 w-full group/field relative flex flex-col justify-center px-6 md:px-8 py-4 rounded-[2.2rem] hover:bg-cream/5 transition-all duration-300">
+                  <label className="text-[10px] font-bold text-cream/50 uppercase tracking-[0.15em] mb-1 group-hover/field:text-seafoam transition-colors flex items-center gap-1.5">
+                    <ChevronDown className="w-3 h-3" />
+                    {t("hero.category_label")}
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                      className="bg-transparent border-none outline-none text-cream text-sm font-semibold w-full focus:ring-0 p-0 appearance-none cursor-pointer pr-6"
+                    >
+                      <option value="">{t("hero.search_type")}</option>
+                      {typeOptions.map((to) => (
+                        <option key={to.value} value={to.value}>{to.label}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/30 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Search Button */}
+                <div className="p-1 w-full md:w-auto">
+                  <button
+                    onClick={handleSearch}
+                    className="w-full md:w-auto h-12 md:h-14 px-8 bg-cream text-forest rounded-[2rem] font-bold text-sm tracking-tight flex items-center justify-center gap-3 transition-all duration-300 hover:bg-seafoam hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 group/btn"
+                  >
+                    <span>{t("hero.search_btn")}</span>
+                    <div className="bg-forest/10 p-1.5 rounded-full group-hover/btn:bg-forest/20 transition-colors">
+                      <Search className="w-4 h-4 text-forest" />
+                    </div>
+                  </button>
+                </div>
+
+              </div>
+            </div>
           </motion.div>
 
           <motion.div
