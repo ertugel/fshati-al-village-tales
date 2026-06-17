@@ -50,13 +50,16 @@ const Profile = () => {
       .from("profiles")
       .update({
         full_name: fullName.trim(),
-        phone: phone.trim(),
         avatar_url: avatarUrl.trim() || null,
       })
       .eq("user_id", user.id);
 
-    if (error) {
-      toast({ title: "Gabim", description: error.message, variant: "destructive" });
+    const { error: contactError } = await supabase
+      .from("profile_contact")
+      .upsert({ user_id: user.id, phone: phone.trim() || null }, { onConflict: "user_id" });
+
+    if (error || contactError) {
+      toast({ title: "Gabim", description: (error || contactError)?.message, variant: "destructive" });
     } else {
       toast({ title: "U ruajt!", description: "Profili u përditësua me sukses." });
     }
