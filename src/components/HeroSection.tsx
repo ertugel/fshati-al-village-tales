@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { MapPin, Calendar, ChevronDown, Search } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/hooks/useLanguage";
 
