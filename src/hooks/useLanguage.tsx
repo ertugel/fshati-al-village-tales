@@ -24,6 +24,9 @@ const translations = {
   "hero.search_placeholder": { sq: "🏔️ Destinacioni...", en: "🏔️ Destination..." },
   "hero.search_type": { sq: "Lloji...", en: "Type..." },
   "hero.search_btn": { sq: "Kërko", en: "Search" },
+  "hero.where_label": { sq: "Ku?", en: "Where to?" },
+  "hero.when_label": { sq: "Kur?", en: "When" },
+  "hero.category_label": { sq: "Lloji", en: "Category" },
 
   // Hero type options
   "hero.type.agritourism": { sq: "Agroturizëm", en: "Agritourism" },
