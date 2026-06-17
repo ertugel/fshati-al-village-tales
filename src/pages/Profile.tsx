@@ -28,8 +28,15 @@ const Profile = () => {
         .maybeSingle();
       if (data) {
         setFullName(data.full_name || "");
-        setPhone(data.phone || "");
         setAvatarUrl(data.avatar_url || "");
+      }
+      const { data: contact } = await supabase
+        .from("profile_contact")
+        .select("phone")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (contact) {
+        setPhone(contact.phone || "");
       }
       setLoading(false);
     };
