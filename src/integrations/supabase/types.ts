@@ -317,13 +317,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_contact: {
+        Row: {
+          created_at: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           full_name: string | null
           id: string
-          phone: string | null
           updated_at: string
           user_id: string
         }
@@ -332,7 +352,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string | null
           updated_at?: string
           user_id: string
         }
@@ -341,7 +360,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -475,24 +493,7 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          avatar_url: string | null
-          full_name: string | null
-          user_id: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          full_name?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          full_name?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       has_role: {
