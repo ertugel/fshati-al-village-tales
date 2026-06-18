@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -20,15 +21,38 @@ const propertyTypes = ["Guesthouse", "Agritourism", "Boutique Hotel", "Camping",
 
 const BecomePartner = () => {
   const [loading, setLoading] = useState(false);
+  const [propertyType, setPropertyType] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const data = new FormData(form);
+    const payload = {
+      name: String(data.get("name") || "").trim(),
+      business_name: String(data.get("business_name") || "").trim(),
+      property_type: propertyType,
+      location: String(data.get("location") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      message: String(data.get("message") || "").trim() || null,
+    };
+
+    if (!payload.name || !payload.business_name || !payload.property_type || !payload.location || !payload.phone) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      toast.success("Application submitted! We'll contact you within 48 hours.");
-      setLoading(false);
-      (e.target as HTMLFormElement).reset();
-    }, 800);
+    const { error } = await supabase.from("partner_applications").insert(payload);
+    setLoading(false);
+
+    if (error) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+
+    toast.success("Application submitted! We'll contact you within 48 hours.");
+    form.reset();
+    setPropertyType("");
   };
 
   return (
