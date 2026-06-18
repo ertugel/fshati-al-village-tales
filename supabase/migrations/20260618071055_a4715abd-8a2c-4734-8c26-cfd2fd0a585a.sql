@@ -1,0 +1,1 @@
+DELETE FROM public.partner_applications WHERE business_name = 'Test Guesthouse QA';

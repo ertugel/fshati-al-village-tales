@@ -317,6 +317,42 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_applications: {
+        Row: {
+          business_name: string
+          created_at: string
+          id: string
+          location: string
+          message: string | null
+          name: string
+          phone: string
+          property_type: string
+          status: string
+        }
+        Insert: {
+          business_name: string
+          created_at?: string
+          id?: string
+          location: string
+          message?: string | null
+          name: string
+          phone: string
+          property_type: string
+          status?: string
+        }
+        Update: {
+          business_name?: string
+          created_at?: string
+          id?: string
+          location?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          property_type?: string
+          status?: string
+        }
+        Relationships: []
+      }
       profile_contact: {
         Row: {
           created_at: string
