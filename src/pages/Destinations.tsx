@@ -2,35 +2,33 @@ import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 
-const destinations = [
-  { id: "theth-alps", emoji: "🏔️", title: "Theth Alps", location: "Shkodër", description: "Pristine mountain village with the iconic Blue Eye waterfall and Lock-in Tower.", price: 45, rating: 4.9, badge: "Bestseller", tags: ["Hiking", "Nature", "Village"], type: "agritourism", difficulty: "hard" },
-  { id: "mrizi-zanave", emoji: "🍽️", title: "Mrizi i Zanave", location: "Theth", description: "Farm-to-table dining experience in Albania's most acclaimed agritourism.", price: 65, rating: 4.8, badge: "Organic", tags: ["Food", "Farm", "Premium"], type: "agritourism", difficulty: "easy" },
-  { id: "berat-unesco", emoji: "🏛️", title: "Berat UNESCO", location: "Berat", description: "The City of a Thousand Windows — a living museum of Ottoman architecture.", price: 35, rating: 4.7, badge: "UNESCO", tags: ["History", "Architecture"], type: "day-tour", difficulty: "easy" },
-  { id: "albanian-riviera", emoji: "🌊", title: "Albanian Riviera", location: "Riviera", description: "Crystal-clear Ionian waters with hidden beaches and coastal villages.", price: 55, rating: 4.8, tags: ["Beach", "Coast", "Summer"], type: "package", difficulty: "easy" },
-  { id: "kantina-arberi", emoji: "🍷", title: "Kantina Arbëri", location: "Berat", description: "Wine cellar visited by Pope Francis — taste award-winning Albanian wines.", price: 25, rating: 4.6, badge: "Bestseller", tags: ["Wine", "Culture"], type: "wine-tasting", difficulty: "easy" },
-  { id: "gjirokaster", emoji: "🏰", title: "Gjirokastër", location: "Gjirokastër", description: "The City of Stone — Ottoman-era architecture and a massive hilltop castle.", price: 30, rating: 4.7, badge: "UNESCO", tags: ["History", "Castle", "Culture"], type: "day-tour", difficulty: "medium" },
-  { id: "valbona-valley", emoji: "⛰️", title: "Valbona Valley", location: "Shkodër", description: "Dramatic alpine valley perfect for the famous Valbona-Theth trail.", price: 40, rating: 4.8, tags: ["Hiking", "Alps", "Nature"], type: "agritourism", difficulty: "hard" },
-  { id: "permet", emoji: "♨️", title: "Përmet", location: "Gjirokastër", description: "Thermal baths, organic food, and the gateway to Lengarica Canyon.", price: 35, rating: 4.6, tags: ["Wellness", "Nature", "Food"], type: "package", difficulty: "easy" },
-  { id: "ksamil", emoji: "🏖️", title: "Ksamil Islands", location: "Sarandë", description: "Turquoise waters and tiny islands — Albania's answer to the Maldives.", price: 60, rating: 4.5, tags: ["Beach", "Islands", "Summer"], type: "boutique-hotel", difficulty: "easy" },
-  { id: "sarande-coast", emoji: "🌅", title: "Sarandë Coast", location: "Sarandë", description: "Vibrant coastal city with stunning sunsets and easy access to Butrint.", price: 50, rating: 4.6, tags: ["Beach", "Coast"], type: "boutique-hotel", difficulty: "easy" },
-  { id: "vlore-bay", emoji: "⛵", title: "Vlorë Bay", location: "Vlorë", description: "Where the Adriatic meets the Ionian — historic port city with great beaches.", price: 45, rating: 4.5, tags: ["Beach", "History"], type: "day-tour", difficulty: "easy" },
-  { id: "theth-trail", emoji: "🥾", title: "Theth Trail", location: "Theth", description: "The legendary Valbona-Theth hiking trail through the Accursed Mountains.", price: 80, rating: 4.9, tags: ["Hiking", "Adventure"], type: "day-tour", difficulty: "hard" },
-];
+interface Destination {
+  id: string;
+  name: string;
+  type: string | null;
+  zone: string | null;
+  price: number | null;
+  price_unit: string | null;
+  description: string | null;
+  emoji: string | null;
+  badge: string | null;
+  rating: number | null;
+  review_count: number | null;
+  image_url: string | null;
+}
 
-const locations = ["All", "Theth", "Berat", "Sarandë", "Shkodër", "Vlorë", "Gjirokastër", "Riviera"];
-const types = [
-  { value: "", label: "All" },
-  { value: "agritourism", label: "Agritourism" },
-  { value: "boutique-hotel", label: "Boutique Hotel" },
-  { value: "wine-tasting", label: "Wine Tasting" },
-  { value: "day-tour", label: "Day Tour" },
-  { value: "package", label: "Package" },
-];
-const difficulties = ["All", "Easy", "Medium", "Hard"];
+const typeLabels: Record<string, string> = {
+  agro: "Agritourism",
+  hotel: "Boutique Hotel",
+  wine: "Wine Estate",
+  beach: "Beach",
+};
+
 const sortOptions = [
   { value: "newest", label: "Newest" },
   { value: "price-asc", label: "Price: Low → High" },
@@ -46,15 +44,38 @@ const badgeColors: Record<string, string> = {
 
 const Destinations = () => {
   const [searchParams] = useSearchParams();
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterLocation, setFilterLocation] = useState("All");
   const [filterType, setFilterType] = useState("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-  const [filterDifficulty, setFilterDifficulty] = useState("All");
   const [filterRating, setFilterRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState("newest");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // Read URL params on mount
+  useEffect(() => {
+    const load = async () => {
+      const { data, error } = await supabase
+        .from("destinations")
+        .select("id, name, type, zone, price, price_unit, description, emoji, badge, rating, review_count, image_url")
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+      if (!error && data) setDestinations(data as Destination[]);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  const locations = useMemo(() => {
+    const zones = Array.from(new Set(destinations.map((d) => d.zone).filter(Boolean))) as string[];
+    return ["All", ...zones.sort()];
+  }, [destinations]);
+
+  const types = useMemo(() => {
+    const t = Array.from(new Set(destinations.map((d) => d.type).filter(Boolean))) as string[];
+    return [{ value: "", label: "All" }, ...t.map((v) => ({ value: v, label: typeLabels[v] || v }))];
+  }, [destinations]);
+
   useEffect(() => {
     const loc = searchParams.get("location");
     const type = searchParams.get("type");
@@ -63,39 +84,37 @@ const Destinations = () => {
       if (match) setFilterLocation(match);
     }
     if (type) setFilterType(type);
-  }, [searchParams]);
+  }, [searchParams, locations]);
 
   const filtered = useMemo(() => {
     let results = destinations.filter((d) => {
-      if (filterLocation !== "All" && d.location !== filterLocation) return false;
+      if (filterLocation !== "All" && d.zone !== filterLocation) return false;
       if (filterType && d.type !== filterType) return false;
-      if (d.price < priceRange[0] || d.price > priceRange[1]) return false;
-      if (filterDifficulty !== "All" && d.difficulty !== filterDifficulty.toLowerCase()) return false;
-      if (filterRating > 0 && d.rating < filterRating) return false;
+      const price = d.price ?? 0;
+      if (price < priceRange[0] || price > priceRange[1]) return false;
+      if (filterRating > 0 && (d.rating ?? 0) < filterRating) return false;
       return true;
     });
 
     switch (sortBy) {
-      case "price-asc": results.sort((a, b) => a.price - b.price); break;
-      case "price-desc": results.sort((a, b) => b.price - a.price); break;
-      case "rating": results.sort((a, b) => b.rating - a.rating); break;
+      case "price-asc": results = [...results].sort((a, b) => (a.price ?? 0) - (b.price ?? 0)); break;
+      case "price-desc": results = [...results].sort((a, b) => (b.price ?? 0) - (a.price ?? 0)); break;
+      case "rating": results = [...results].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); break;
       default: break;
     }
 
     return results;
-  }, [filterLocation, filterType, priceRange, filterDifficulty, filterRating, sortBy]);
+  }, [destinations, filterLocation, filterType, priceRange, filterRating, sortBy]);
 
   const resetFilters = () => {
     setFilterLocation("All");
     setFilterType("");
     setPriceRange([0, 500]);
-    setFilterDifficulty("All");
     setFilterRating(0);
   };
 
   const FilterSidebar = () => (
     <div className="space-y-6">
-      {/* Location */}
       <div>
         <h3 className="font-heading text-sm font-bold text-foreground mb-3">Location</h3>
         <div className="space-y-1.5">
@@ -113,7 +132,6 @@ const Destinations = () => {
         </div>
       </div>
 
-      {/* Type */}
       <div>
         <h3 className="font-heading text-sm font-bold text-foreground mb-3">Type</h3>
         <div className="space-y-1.5">
@@ -131,7 +149,6 @@ const Destinations = () => {
         </div>
       </div>
 
-      {/* Price Range */}
       <div>
         <h3 className="font-heading text-sm font-bold text-foreground mb-3">Price Range</h3>
         <div className="px-1">
@@ -150,25 +167,6 @@ const Destinations = () => {
         </div>
       </div>
 
-      {/* Difficulty */}
-      <div>
-        <h3 className="font-heading text-sm font-bold text-foreground mb-3">Difficulty</h3>
-        <div className="flex flex-wrap gap-2">
-          {difficulties.map((d) => (
-            <button
-              key={d}
-              onClick={() => setFilterDifficulty(d)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                filterDifficulty === d ? "bg-forest text-cream" : "bg-card text-muted-foreground border border-border hover:bg-muted/50"
-              }`}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Rating */}
       <div>
         <h3 className="font-heading text-sm font-bold text-foreground mb-3">Rating</h3>
         <div className="space-y-1.5">
@@ -190,7 +188,6 @@ const Destinations = () => {
         </div>
       </div>
 
-      {/* Reset */}
       <button
         onClick={resetFilters}
         className="w-full py-2.5 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors"
@@ -204,7 +201,7 @@ const Destinations = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Destinacione — Agroturizme & Hotele | Fshati.al"
-        description="300+ destinacione rurali në Shqipëri. Agroturizme, hotele boutique, kantina verërash. UNESCO Berat, Alpet e Thethit, Riviera Jonike."
+        description="Destinacione rurali në Shqipëri. Agroturizme, hotele boutique, kantina verërash. UNESCO Berat, Alpet e Thethit, Riviera Jonike."
         path="/destinations"
       />
       <Navbar />
@@ -216,7 +213,6 @@ const Destinations = () => {
           </motion.div>
 
           <div className="flex gap-8">
-            {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <div className="sticky top-28 bg-card rounded-2xl border border-border p-5 shadow-card">
                 <h2 className="font-heading text-lg font-bold text-foreground mb-5">Filters</h2>
@@ -224,9 +220,7 @@ const Destinations = () => {
               </div>
             </aside>
 
-            {/* Main content */}
             <div className="flex-1 min-w-0">
-              {/* Top bar: count + sort + mobile filter toggle */}
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <p className="text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground">{filtered.length}</span> destinations found
@@ -252,45 +246,47 @@ const Destinations = () => {
                 </div>
               </div>
 
-              {/* Results grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filtered.map((d, i) => (
-                  <motion.div key={d.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-                    <Link to={`/destination/${d.id}`} className="group block rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-card-hover transition-all">
-                      <div className="relative h-48 gradient-forest-ocean flex items-center justify-center">
-                        <span className="text-5xl group-hover:scale-110 transition-transform">{d.emoji}</span>
-                        {d.badge && (
-                          <span className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full ${badgeColors[d.badge] || "bg-muted text-foreground"}`}>{d.badge}</span>
-                        )}
-                      </div>
-                      <div className="p-5">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-1">
-                            {Array.from({ length: 5 }, (_, i) => (
-                              <span key={i} className={i < Math.floor(d.rating) ? "text-amber-400" : "text-border"}>★</span>
-                            ))}
-                            <span className="text-xs text-muted-foreground ml-1">{d.rating}</span>
+              {loading ? (
+                <p className="text-center text-muted-foreground py-12">Duke ngarkuar destinacionet…</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filtered.map((d, i) => (
+                    <motion.div key={d.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+                      <Link to={`/destination/${d.id}`} className="group block rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-card-hover transition-all">
+                        <div className="relative h-48 gradient-forest-ocean flex items-center justify-center overflow-hidden">
+                          {d.image_url ? (
+                            <img src={d.image_url} alt={d.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                          ) : (
+                            <span className="text-5xl group-hover:scale-110 transition-transform">{d.emoji || "🏞️"}</span>
+                          )}
+                          {d.badge && (
+                            <span className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full ${badgeColors[d.badge] || "bg-muted text-foreground"}`}>{d.badge}</span>
+                          )}
+                        </div>
+                        <div className="p-5">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-1">
+                              {Array.from({ length: 5 }, (_, idx) => (
+                                <span key={idx} className={idx < Math.floor(d.rating ?? 0) ? "text-amber-400" : "text-border"}>★</span>
+                              ))}
+                              <span className="text-xs text-muted-foreground ml-1">{d.rating ?? "—"}</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground">{d.zone}</span>
                           </div>
-                          <span className="text-xs text-muted-foreground">{d.location}</span>
+                          <h3 className="font-heading text-xl font-bold text-foreground mb-1">{d.name}</h3>
+                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{d.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-sage">€{d.price}{d.price_unit ? `/${d.price_unit}` : ""}</span>
+                            <span className="text-sm font-semibold text-forest bg-seafoam/30 px-4 py-1.5 rounded-full">Shiko →</span>
+                          </div>
                         </div>
-                        <h3 className="font-heading text-xl font-bold text-foreground mb-1">{d.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{d.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-sage">€{d.price}</span>
-                          <span className="text-sm font-semibold text-forest bg-seafoam/30 px-4 py-1.5 rounded-full">Shiko →</span>
-                        </div>
-                        <div className="flex gap-1.5 mt-2">
-                          {d.tags.map((t) => (
-                            <span key={t} className="text-xs bg-sand px-2 py-0.5 rounded-full text-muted-foreground">{t}</span>
-                          ))}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
-              {filtered.length === 0 && (
+              {!loading && filtered.length === 0 && (
                 <p className="text-center text-muted-foreground py-12">No destinations found matching your filters.</p>
               )}
             </div>
@@ -298,7 +294,6 @@ const Destinations = () => {
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-foreground/30" onClick={() => setMobileFiltersOpen(false)} />
