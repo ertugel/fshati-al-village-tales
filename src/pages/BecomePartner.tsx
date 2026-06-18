@@ -121,35 +121,39 @@ const BecomePartner = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Your Name</label>
-                  <Input placeholder="Full name" required />
+                  <Input name="name" placeholder="Full name" required />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Business Name</label>
-                  <Input placeholder="Property / business name" required />
+                  <Input name="business_name" placeholder="Property / business name" required />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Property Type</label>
-                  <Select required>
+                  <Select value={propertyType} onValueChange={setPropertyType} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
                       {propertyTypes.map((t) => (
-                        <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Location</label>
-                  <Input placeholder="City / village" required />
+                  <Input name="location" placeholder="City / village" required />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-1 block">Phone</label>
-                <Input type="tel" placeholder="+355 6X XXX XXXX" required />
+                <Input name="phone" type="tel" placeholder="+355 6X XXX XXXX" required />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1 block">Message (optional)</label>
+                <Textarea name="message" placeholder="Tell us about your property..." rows={4} />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-1 block">Message (optional)</label>
