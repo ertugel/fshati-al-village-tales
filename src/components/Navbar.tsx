@@ -192,6 +192,13 @@ const Navbar = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-6 right-6 p-3 rounded-full bg-cream/10 text-cream hover:bg-cream/20 hover:text-seafoam transition-colors z-[60]"
+              aria-label={t("nav.close") || "Close menu"}
+            >
+              <X className="h-7 w-7" />
+            </button>
             <nav className="flex flex-col items-center gap-6">
               {navLinks.map((l, i) => (
                 <motion.div key={l.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
