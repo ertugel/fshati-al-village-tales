@@ -17,6 +17,7 @@ const translations = {
   "nav.mybookings": { sq: "Rezervimet e mia", en: "My Bookings" },
   "nav.profile": { sq: "Profili im", en: "My Profile" },
   "nav.signout": { sq: "Dil nga llogaria", en: "Sign Out" },
+  "nav.close": { sq: "Mbyll menunë", en: "Close menu" },
 
   // Hero
   "hero.headline": { sq: "Ku çdo fshat tregon një histori", en: "Where every village tells a story" },
