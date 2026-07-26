@@ -22,6 +22,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import BecomePartner from "./pages/BecomePartner";
 import ResetPassword from "./pages/ResetPassword";
+import OAuthConsent from "./pages/OAuthConsent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/home" element={<Navigate to="/" replace />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               <Route path="/destinations" element={<Destinations />} />
               <Route path="/destination/:id" element={<DestinationDetail />} />
               <Route path="/tours" element={<Tours />} />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,15 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Preserve a same-origin relative path (e.g. the OAuth consent URL) so that
+  // sign-in returns the user to the flow they came from.
+  const rawNext = searchParams.get("next");
+  const next = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
 
   if (user) {
-    navigate("/");
+    navigate(next, { replace: true });
     return null;
   }
 
@@ -31,7 +37,7 @@ const Auth = () => {
         toast.error(error.message);
       } else {
         toast.success("Mirë se vini!");
-        navigate("/");
+        navigate(next, { replace: true });
       }
     } else {
       if (!fullName.trim()) {

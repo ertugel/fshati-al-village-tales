@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://qrhmbsipwzbbpdbopebb.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "fshati-al-mcp",
+      "version": "0.1.0",
+      "title": "Fshati.al"
+    },
+    "tools": [
+      {
+        "name": "list_destinations",
+        "title": "List destinations",
+        "description": "List active rural tourism destinations on Fshati.al (agritourism, guesthouses, hotels). Supports optional filters.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "zone": {
+              "description": "Filter by zone (e.g. 'Alps', 'Riviera', 'Berat').",
+              "type": "string"
+            },
+            "type": {
+              "description": "Filter by accommodation type.",
+              "type": "string"
+            },
+            "featured": {
+              "description": "Only featured destinations.",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "Max results (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_tours",
+        "title": "List tours",
+        "description": "List active tours offered on Fshati.al with optional filters.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "zone": {
+              "type": "string"
+            },
+            "difficulty": {
+              "description": "e.g. easy, moderate, hard",
+              "type": "string"
+            },
+            "duration_category": {
+              "description": "e.g. day, multi-day",
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_events",
+        "title": "List upcoming events",
+        "description": "List upcoming cultural and sporting events across Albania on Fshati.al.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "zone": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_guides",
+        "title": "List local guides",
+        "description": "List active local guides on Fshati.al with optional filters.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "zone": {
+              "description": "Filter by any zone the guide covers.",
+              "type": "string"
+            },
+            "language": {
+              "description": "Filter by spoken language.",
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_bookings",
+        "title": "My bookings",
+        "description": "List the signed-in user's Fshati.al bookings (accommodations, tours, guides).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
