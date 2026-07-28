@@ -264,6 +264,7 @@ const OwnerDashboard = () => {
                   <th className="text-left p-3 font-medium text-foreground">Persona</th>
                   <th className="text-left p-3 font-medium text-foreground">Totali</th>
                   <th className="text-left p-3 font-medium text-foreground">Statusi</th>
+                  <th className="text-left p-3 font-medium text-foreground">Veprime</th>
                 </tr>
               </thead>
               <tbody>
@@ -283,6 +284,24 @@ const OwnerDashboard = () => {
                         b.status === "cancelled" ? "bg-red-100 text-red-700" :
                         "bg-yellow-100 text-yellow-800"
                       }`}>{b.status}</span>
+                    </td>
+                    <td className="p-3">
+                      {b.status === "pending" ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => updateBookingStatus(b.id, "confirmed")}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-forest text-cream hover:bg-pine transition-colors">
+                            Konfirmo
+                          </button>
+                          <button
+                            onClick={() => updateBookingStatus(b.id, "cancelled")}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:bg-muted transition-colors">
+                            Refuzo
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}
