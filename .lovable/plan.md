@@ -1,109 +1,76 @@
-# Fshati.al Strategic Assessment & Roadmap
+## WHAT WORKS
 
-## What We've Done Well
+- **Auth (email/password)** — `src/hooks/useAuth.tsx`, `src/pages/Auth.tsx`, `ResetPassword.tsx`. Signup writes `profiles` + `user_roles` via the `handle_new_user` trigger (role clamped to tourist/owner). 3 profiles, 4 role rows in DB.
+- **Role-gated routing** — `ProtectedRoute.tsx` wraps `/dashboard` (owner), `/admin` (admin), `/my-bookings`, `/profile`. `/admin` is protected (the old hole is closed).
+- **Destinations listing + detail** — `pages/Destinations.tsx`, `DestinationDetail.tsx`, `components/DestinationsGrid.tsx` all query the `destinations` table. 6 rows live.
+- **Tours listing + detail** — `pages/Tours.tsx`, `TourDetail.tsx`, `components/ToursSection.tsx` query `tours`. 12 rows.
+- **Events** — `components/EventsSection.tsx` queries `events`. 4 rows.
+- **Guides listing/detail pages** — `pages/Guides.tsx`, `GuideDetail.tsx` query `guides`. 6 rows.
+- **Booking submission** — `BookingModal.tsx` inserts into `bookings` and invokes the `send-booking-email` function. 2 real rows exist.
+- **Owner dashboard** — `pages/OwnerDashboard.tsx`: real CRUD on `accommodations` (7 rows), booking list filtered to owned items, stats.
+- **Admin panel** — `pages/AdminPanel.tsx`: CMS over destinations, events, tours, bookings, chat moderation, site settings.
+- **Community chat** — `CommunityChat.tsx` with Supabase Realtime, 5 messages persisted.
+- **Partner applications** — `BecomePartner.tsx` really inserts into `partner_applications` (0 rows so far — untested by real users).
+- **AI assistant** — `supabase/functions/chat` now requires a valid Bearer JWT (`getClaims`) before hitting Lovable AI.
+- **i18n SQ/EN** — `useLanguage.tsx`, applied across nav, hero, sections.
+- **MCP server** — 5 OAuth-scoped tools in `src/lib/mcp/tools/`, deployed as the `mcp` edge function.
 
-| Area | Detail |
-|---|---|
-| **Brand & Design** | Cohesive visual identity (forest/ocean/cream palette, Cormorant Garamond + DM Sans). The new hero search bar is genuinely premium-looking. |
-| **Auth & Roles** | Three-tier system (tourist / owner / admin) with `has_role()` security-definer function. No anonymous sign-ups. HIBP password protection enabled. |
-| **Booking Flow** | End-to-end: modal → Supabase insert → Resend email edge function → owner notification + guest confirmation. RLS policies correctly allow guest checkout. |
-| **Owner Dashboard** | Real CRUD on accommodations, real booking list filtered by ownership, stats (bookings, revenue, ratings). |
-| **Admin Panel** | Full CMS: destinations, events, tours, bookings, chat moderation, site settings, reviews. |
-| **Community Features** | Real-time Supabase chat, AI travel assistant (Lovable AI gateway, auth-gated), review system with booking verification gate. |
-| **i18n** | Full Albanian/English language toggle with persistent preference. |
-| **Progressive Security** | RLS policies were progressively tightened across migrations. PII (phone) was split into a separate `profile_contact` table. |
+## WHAT IS BROKEN
 
----
+- **Homepage guides grid is fake** — `components/GuidesGrid.tsx` still hardcodes 8 guides with slug IDs (`mikel-gashi`). Those `<Link to="/guide/mikel-gashi">` links hit `GuideDetail.tsx`, which queries `guides` by UUID → guaranteed "not found" on every homepage guide click. This is the single worst live bug.
+- **Contact form does nothing** — `pages/Contact.tsx` fakes success with `setTimeout`. No DB write, no email. Messages are silently discarded.
+- **Newsletter does nothing** — `components/Newsletter.tsx` also fakes it with `setTimeout(1200)`. No subscribers table exists. GDPR copy over a no-op.
+- **Emails likely undelivered** — `supabase/functions/send-booking-email/index.ts` sends from `onboarding@resend.dev`. Resend only delivers that to the account owner; guest confirmations to real addresses are dropped.
+- **Placeholder contact info shown live** — `pages/Contact.tsx` and `hooks/useSiteSettings.ts` display `+355 69 XXX XXXX` as the WhatsApp number.
+- **Google Analytics fires nowhere** — `index.html` uses `G-XXXXXXXXXX`.
+- **Fake online counter** — `CommunityChat.tsx` `Math.floor(Math.random()*17)+18`, refreshed every 45s. Presentational lie.
+- **Services page is static** — `pages/Services.tsx` has a hardcoded `services` array with no backing table.
+- **Booking has no ownership on the anon path** — the RLS insert policy for guests requires `user_id IS NULL`; signed-in users' bookings only carry `user_id` if `BookingModal` sets it. Worth verifying end to end before claiming "my bookings" is complete.
+- **Reviews unproven** — `reviews` table has 0 rows; `ReviewSection.tsx`'s booking-verification gate has never run against real data.
 
-## What's Bad — Critical Issues
+## WHAT IS MISSING
 
-### 🔴 P0 — Broken Architecture
+- **Payments** — no Stripe/Paddle. "Book" produces a pending row and an email; no money moves.
+- **Booking status workflow** — owners can see bookings but there is no confirm/reject UI in `OwnerDashboard.tsx`; status never leaves `pending`.
+- **Availability calendar** — no blocked dates on accommodations; double-booking is possible.
+- **Accommodations have no public surface** — 7 rows, owner-created, but no `/accommodations` route and no listing page. Owners publish into a void.
+- **Admin review of partner applications** — rows are written but there's no admin UI reading `partner_applications`.
+- **Wishlist, referrals, blog/SEO content** — listed in `.lovable/plan.md`, never started.
+- **Code splitting** — `App.tsx` imports all 20 pages eagerly; no `React.lazy`. Every visitor downloads AdminPanel + OwnerDashboard.
+- **React Query** — installed and provider-mounted, used for nothing. All fetching is raw `useEffect`.
 
-1. **Static data vs. Database disconnect** — The biggest problem.
-   - `/destinations`, `/tours`, `/guides` listing pages show **hardcoded JS arrays**, not DB data.
-   - `/destination/:id`, `/tour/:id`, `/guide/:id` detail pages use **static object literals** (9, 12, and 8 records respectively).
-   - The Admin Panel can create new DB records, but **they never appear on the site**.
-   - This means the marketplace is essentially a brochureware shell — not a real dynamic marketplace.
+## DATABASE STATUS
 
-2. **Admin Panel is publicly accessible** — `App.tsx:54` routes directly to `<AdminPanel />` without `<ProtectedRoute>`. Anyone with the URL can see all bookings, user emails, and phone numbers.
+| Table | Rows | Frontend status |
+|---|---|---|
+| `destinations` | 6 | Connected (list, detail, home grid, admin) |
+| `tours` | 12 | Connected (list, detail, home section, admin) |
+| `guides` | 6 | Partially — `/guides` and `/guide/:id` connected; **homepage `GuidesGrid.tsx` hardcoded** |
+| `events` | 4 | Connected |
+| `accommodations` | 7 | Connected in OwnerDashboard only; **no public page reads it** |
+| `bookings` | 2 | Connected (create, my-bookings, owner, admin) |
+| `reviews` | 0 | Connected in code, never exercised |
+| `profiles` | 3 | Connected |
+| `profile_contact` | 0 | Connected in `Profile.tsx`, unused in practice |
+| `user_roles` | 4 | Connected via `useAuth` |
+| `chat_messages` | 5 | Connected + realtime |
+| `site_settings` | 8 | Connected via `useSiteSettings`, but defaults still placeholders |
+| `partner_applications` | 0 | Write-only; no admin read UI |
 
-3. **Partner application form does nothing** — `BecomePartner.tsx` fakes a success toast with `setTimeout`. No DB write, no email, no onboarding workflow.
+## SECURITY ISSUES
 
-### 🟠 P1 — Production Readiness
+- **`bookings` policy sprawl** — 9 overlapping policies, two duplicate admin pairs ("Admin can view all bookings" and "Admins can view all bookings"). Also `Users can view own bookings` includes `OR (user_id IS NULL)`, meaning **any authenticated user can read every guest booking** — names, emails, phone numbers. This is a real PII leak.
+- **`send-booking-email` has `verify_jwt = false`** (`supabase/config.toml`) — anyone can POST arbitrary payloads and make your Resend account send mail. No rate limit, no origin check.
+- **`chat_messages` publicly readable/writable by `anon`** — accepted by design, but there's no rate limiting or profanity/spam control; a script can flood it.
+- **19 `as any` casts in `AdminPanel.tsx`** plus 4 in `CommunityChat.tsx` — these bypass generated types on admin write paths, so a schema change silently breaks writes rather than failing at compile time.
+- **`profiles` readable by `anon`** (name/avatar only) — acceptable, PII already split into `profile_contact`.
 
-4. **Bundle size: 1.1MB single JS chunk** — Zero code splitting. Every visitor downloads AdminPanel, OwnerDashboard, framer-motion, and 15+ unused shadcn components on first load.
+## NEXT 5 ACTIONS
 
-5. **Emails won't deliver in production** — The `send-booking-email` edge function uses `onboarding@resend.dev` as the sender. Resend requires a verified custom domain for production delivery. Guest confirmations likely go to spam or are dropped.
+1. **Fix the guides leak-through**: replace the hardcoded array in `GuidesGrid.tsx` with a `guides` query so homepage links resolve.
+2. **Close the bookings PII hole**: drop the `OR (user_id IS NULL)` clause and dedupe the redundant admin policies on `bookings`.
+3. **Make Contact and Newsletter real**: add `contact_messages` and `newsletter_subscribers` tables, wire both forms, drop the fake `setTimeout`s.
+4. **Ship the owner booking workflow**: confirm/reject buttons in `OwnerDashboard.tsx` with status transitions, so bookings stop dying at `pending`.
+5. **Production comms**: verified Resend domain for `send-booking-email` (+ `verify_jwt` or a shared-secret check), real WhatsApp number in `site_settings`, real GA4 ID in `index.html`.
 
-6. **Placeholder contact info shown to real users** — `Contact.tsx` displays `+355 69 XXX XXXX`. `useSiteSettings.ts` defaults to the same placeholder.
-
-7. **Google Analytics is a placeholder** — `G-XXXXXXXXXX` in `index.html`. Tracking script loads but fires to a non-existent property.
-
-### 🟡 P2 — Technical Debt & UX
-
-8. **Zero React Query usage** — Despite being in `package.json`, all data fetching is raw `useEffect + useState`. No caching, background refresh, or deduplication.
-
-9. **17 `as any` type bypasses** — Mostly in `AdminPanel.tsx`. Types already exist in `types.ts`.
-
-10. **Admin Panel unusable on mobile** — Fixed `w-64` sidebar with no hamburger menu.
-
-11. **Fake online count in chat** — `Math.random() * 17 + 18` runs on a 45-second interval.
-
-12. **Dead dependencies** — `recharts`, `input-otp`, `vaul`, `react-resizable-panels`, `embla-carousel-react` are installed but unused in the product UI.
-
----
-
-## Where This Project Should Go
-
-### Phase 1: Make It a Real Marketplace (MVP Fix)
-
-**Goal:** The database must drive the frontend. Admin-created content must be visible.
-
-- Replace static arrays in `Destinations.tsx`, `Tours.tsx`, `Guides.tsx` with `useEffect` queries to Supabase.
-- Replace static detail objects in `DestinationDetail.tsx`, `TourDetail.tsx`, `GuideDetail.tsx` with DB fetches by `:id`.
-- Add image handling: accommodations already use `fshati-images` bucket; extend this to destinations/tours/guides.
-- Fix the Partner form: create a `partner_applications` table, write to it on submit, send admin email via edge function.
-
-### Phase 2: Secure & Harden
-
-**Goal:** Close the gaps that would kill trust or expose data.
-
-- Wrap `/admin` in `<ProtectedRoute requiredRole="admin" />`.
-- Move email sender from `onboarding@resend.dev` to a verified domain (e.g., `hello@fshati.al`).
-- Replace placeholder phone/WhatsApp with real values in `site_settings`.
-- Fix GA4 ID to a real tracking property.
-
-### Phase 3: Enable Revenue (Monetization)
-
-**Goal:** Turn booking requests into actual money.
-
-- Integrate Stripe or Paddle for payment-at-confirmation.
-- Build owner booking confirmation/rejection UI in `OwnerDashboard`.
-- Add automated booking status transitions (`pending` → `confirmed` → `paid` / `cancelled`).
-- Add owner payout mechanism or manual reconciliation workflow.
-
-### Phase 4: Performance & Polish
-
-**Goal:** Make it fast and professional on all devices.
-
-- Add `React.lazy()` + `Suspense` for all protected routes in `App.tsx`.
-- Add mobile hamburger + responsive layout to `AdminPanel`.
-- Replace raw `useEffect` fetches with `@tanstack/react-query` for caching and stale-while-revalidate.
-- Remove dead dependencies.
-- Add real image optimization (responsive srcset, WebP/AVIF).
-
-### Phase 5: Growth Features
-
-**Goal:** Attract and retain users.
-
-- SEO blog/content section (dynamic via `site_settings` or a `posts` table).
-- Calendar availability for accommodations (block-out dates).
-- Wishlist / saved items for tourists.
-- Referral program for partners.
-- Multi-image galleries for destinations and accommodations.
-
----
-
-## Bottom Line
-
-**Fshati.al looks like a premium product but behaves like a prototype.** The design, auth, and booking plumbing are solid. The fatal flaw is that the database and frontend are not connected for the core marketplace content (destinations, tours, guides). Fix that first, secure the admin panel, and you'll have a real platform. Everything else is polish.
+Bottom line: the marketplace content layer got fixed since the last audit — destinations, tours and events are genuinely database-driven now. What remains is that **nothing converts**: no payments, no booking confirmation, no working contact channel, undeliverable email, and a homepage guides section that 404s on click.

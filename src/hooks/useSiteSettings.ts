@@ -17,7 +17,7 @@ const defaults: SiteSettings = {
   hero_headline: "Ku çdo fshat tregon një histori",
   hero_sub: "Agroturizme, guida lokale dhe ture tematike",
   subscriber_count: "2847",
-  whatsapp: "+355 69 XXX XXXX",
+  whatsapp: "+355 68 369 3272",
   email: "hello@fshati.al",
   online_label: "24 online",
   show_events: "true",
