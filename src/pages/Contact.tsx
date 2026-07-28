@@ -10,10 +10,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 import SEOHead from "@/components/SEOHead";
+import { supabase } from "@/integrations/supabase/client";
 
 const infoCards = [
   { icon: Mail, label: "Email", value: "hello@fshati.al" },
-  { icon: Phone, label: "WhatsApp", value: "+355 69 XXX XXXX" },
+  { icon: Phone, label: "WhatsApp", value: "+355 68 369 3272" },
   { icon: MapPin, label: "Location", value: "Tiranë, Albania" },
 ];
 
@@ -93,20 +94,20 @@ const Contact = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">Name</label>
-                    <Input placeholder="Your name" required />
+                    <Input name="name" placeholder="Your name" required />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">Email</label>
-                    <Input type="email" placeholder="email@example.com" required />
+                    <Input name="email" type="email" placeholder="email@example.com" required />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Subject</label>
-                  <Input placeholder="How can we help?" required />
+                  <Input name="subject" placeholder="How can we help?" required />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Message</label>
-                  <Textarea placeholder="Write your message..." rows={5} required />
+                  <Textarea name="message" placeholder="Write your message..." rows={5} required />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   <Send className="h-4 w-4 mr-2" /> {loading ? "Sending..." : "Send Message"}
