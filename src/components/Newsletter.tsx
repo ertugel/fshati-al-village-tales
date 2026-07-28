@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { supabase } from "@/integrations/supabase/client";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ const Newsletter = () => {
   const [error, setError] = useState("");
   const { t } = useLanguage();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,7 +20,16 @@ const Newsletter = () => {
       return;
     }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
+    const { error: dbError } = await supabase
+      .from("newsletter_subscribers")
+      .insert({ email: email.trim().toLowerCase(), is_active: true });
+    setLoading(false);
+    // Duplicate email = already subscribed, still a success for the user
+    if (dbError && dbError.code !== "23505") {
+      setError(dbError.message);
+      return;
+    }
+    setSubmitted(true);
   };
 
   return (

@@ -28,14 +28,25 @@ const faqs = [
 const Contact = () => {
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const fd = new FormData(form);
     setLoading(true);
-    setTimeout(() => {
-      toast.success("Message sent! We'll reply within 24h");
-      setLoading(false);
-      (e.target as HTMLFormElement).reset();
-    }, 800);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: String(fd.get("name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      subject: String(fd.get("subject") || "").trim(),
+      message: String(fd.get("message") || "").trim(),
+      status: "new",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Message sent! We'll reply within 24h");
+    form.reset();
   };
 
   return (
