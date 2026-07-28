@@ -86,6 +86,13 @@ const OwnerDashboard = () => {
     else { toast.success("Deleted!"); fetchData(); }
   };
 
+  const updateBookingStatus = async (id: string, status: "confirmed" | "cancelled") => {
+    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(status === "confirmed" ? "Rezervimi u konfirmua!" : "Rezervimi u anulua.");
+    setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
