@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('browser analytics initialization', () => {
   it('configures the supplied public measurement ID exactly once and queues events', () => {
-    const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+    const html = readFileSync('index.html', 'utf8');
     const inlineScripts = Array.from(html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
       .map((match) => match[1]).filter((script) => script.trim());
     const browser = { dataLayer: [] as IArguments[] };
