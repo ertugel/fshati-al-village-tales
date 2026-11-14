@@ -8,28 +8,11 @@ import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import ReviewSection from "@/components/ReviewSection";
 import SEOHead from "@/components/SEOHead";
-
-interface Tour {
-  id: string;
-  title: string;
-  duration: string | null;
-  price: number | null;
-  difficulty: string | null;
-  zone: string | null;
-  description: string | null;
-  includes: string[] | null;
-  emoji: string | null;
-}
-
-const difficultyColor: Record<string, string> = {
-  Easy: "bg-seafoam/30 text-forest",
-  Medium: "bg-amber-100 text-amber-800",
-  Hard: "bg-red-100 text-red-700",
-};
+import { difficultyClass, type TourDetails } from "@/lib/tours";
 
 const TourDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [tour, setTour] = useState<Tour | null>(null);
+  const [tour, setTour] = useState<TourDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
 
@@ -41,7 +24,7 @@ const TourDetail = () => {
         .select("id, title, duration, price, difficulty, zone, description, includes, emoji")
         .eq("id", id)
         .maybeSingle();
-      setTour(data as Tour | null);
+      setTour(data);
       setLoading(false);
     };
     load();
@@ -102,7 +85,7 @@ const TourDetail = () => {
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  {tour.difficulty && <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyColor[tour.difficulty] || "bg-muted text-foreground"}`}>{tour.difficulty}</span>}
+                  {tour.difficulty && <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyClass(tour.difficulty)}`}>{tour.difficulty}</span>}
                   <span className="flex items-center gap-1 text-sm text-muted-foreground"><Clock className="h-3.5 w-3.5" /> {tour.duration}</span>
                   <span className="flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5" /> {tour.zone}</span>
                 </div>

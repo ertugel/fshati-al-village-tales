@@ -5,20 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/useLanguage";
 import BookingModal from "./BookingModal";
-
-interface Tour {
-  id: string; emoji: string | null; title: string; duration: string;
-  price: number; description: string | null; difficulty: string | null;
-  zone: string | null; duration_category: string;
-}
-
-const difficultyColor: Record<string, string> = {
-  Easy: "bg-seafoam/30 text-forest", Medium: "bg-amber-100 text-amber-800", Hard: "bg-red-100 text-red-700",
-};
+import TourCardBody from "./TourCardBody";
+import { difficultyClass, type TourListItem } from "@/lib/tours";
 
 const ToursSection = () => {
   const [active, setActive] = useState("day");
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TourListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState<{ id: string; type: "tour"; name: string; price: number } | null>(null);
   const { t } = useLanguage();
@@ -36,7 +28,7 @@ const ToursSection = () => {
     const fetchTours = async () => {
       setLoading(true);
       const { data } = await supabase.from("tours").select("*").eq("duration_category", activeDbKey).order("created_at", { ascending: false });
-      setTours((data as Tour[]) || []);
+      setTours(data || []);
       setLoading(false);
     };
     fetchTours();
@@ -78,21 +70,15 @@ const ToursSection = () => {
                     <div className="flex items-start justify-between mb-3">
                       <span className="text-3xl">{tour.emoji}</span>
                       {tour.difficulty && (
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyColor[tour.difficulty] || "bg-muted text-foreground"}`}>{tour.difficulty}</span>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyClass(tour.difficulty)}`}>{tour.difficulty}</span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                      <span>⏱ {tour.duration}</span><span>•</span><span>📍 {tour.zone}</span>
-                    </div>
-                    <h3 className="font-heading text-lg font-bold text-foreground mb-1">{tour.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-sage">€{tour.price}</span>
+                    <TourCardBody tour={tour} action={
                       <button onClick={() => setBooking({ id: tour.id, type: "tour", name: tour.title, price: tour.price })}
                         className="text-sm font-semibold text-forest bg-seafoam/30 hover:bg-seafoam/50 px-4 py-1.5 rounded-full transition-colors">
                         {t("tours.book")}
                       </button>
-                    </div>
+                    } />
                   </div>
                 ))
               )}

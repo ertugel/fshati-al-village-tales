@@ -5,27 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-
-interface Tour {
-  id: string;
-  title: string;
-  duration: string | null;
-  duration_category: string | null;
-  price: number | null;
-  difficulty: string | null;
-  zone: string | null;
-  description: string | null;
-  emoji: string | null;
-}
-
-const difficultyColor: Record<string, string> = {
-  Easy: "bg-seafoam/30 text-forest",
-  Medium: "bg-amber-100 text-amber-800",
-  Hard: "bg-red-100 text-red-700",
-};
+import TourCardBody from "@/components/TourCardBody";
+import { difficultyClass, type TourListItem } from "@/lib/tours";
 
 const Tours = () => {
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TourListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [zone, setZone] = useState("All");
@@ -38,14 +22,14 @@ const Tours = () => {
         .select("id, title, duration, duration_category, price, difficulty, zone, description, emoji")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
-      if (!error && data) setTours(data as Tour[]);
+      if (!error && data) setTours(data);
       setLoading(false);
     };
     load();
   }, []);
 
   const tabs = useMemo(() => {
-    const cats = Array.from(new Set(tours.map((t) => t.duration_category).filter(Boolean))) as string[];
+    const cats = Array.from(new Set(tours.map((t) => t.duration_category)));
     return [{ key: "all", label: "Të gjitha" }, ...cats.map((c) => ({ key: c, label: c }))];
   }, [tours]);
 
@@ -106,17 +90,11 @@ const Tours = () => {
                   <Link to={`/tour/${tour.id}`} key={tour.id} className="bg-card rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-all group block">
                     <div className="flex items-start justify-between mb-3">
                       <span className="text-3xl">{tour.emoji || "🧭"}</span>
-                      {tour.difficulty && <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyColor[tour.difficulty] || "bg-muted text-foreground"}`}>{tour.difficulty}</span>}
+                      {tour.difficulty && <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${difficultyClass(tour.difficulty)}`}>{tour.difficulty}</span>}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                      <span>⏱ {tour.duration}</span><span>•</span><span>📍 {tour.zone}</span>
-                    </div>
-                    <h3 className="font-heading text-lg font-bold text-foreground mb-1">{tour.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{tour.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-sage">€{tour.price}</span>
+                    <TourCardBody tour={tour} action={
                       <span className="text-sm font-semibold text-forest bg-seafoam/30 px-4 py-1.5 rounded-full">Shiko →</span>
-                    </div>
+                    } />
                   </Link>
                 ))}
               </motion.div>

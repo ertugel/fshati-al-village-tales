@@ -105,15 +105,17 @@ const OwnerDashboard = () => {
       owner_id: user!.id,
     };
 
-    if (editingId) {
-      const { error } = await supabase.from("accommodations").update(data).eq("id", editingId);
-      if (error) toast.error(error.message);
-      else { toast.success("Updated!"); resetForm(); fetchData(); }
-    } else {
-      const { error } = await supabase.from("accommodations").insert(data);
-      if (error) toast.error(error.message);
-      else { toast.success("Created!"); resetForm(); fetchData(); }
+    const request = editingId
+      ? supabase.from("accommodations").update(data).eq("id", editingId)
+      : supabase.from("accommodations").insert(data);
+    const { error } = await request;
+    if (error) {
+      toast.error(error.message);
+      return;
     }
+    toast.success(editingId ? "Updated!" : "Created!");
+    resetForm();
+    fetchData();
   };
 
   // Stats calculations

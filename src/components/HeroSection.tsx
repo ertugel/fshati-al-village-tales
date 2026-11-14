@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MapPin, Calendar, ChevronDown, Search } from "lucide-react";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/hooks/useLanguage";
+import type { SiteSettings } from "@/hooks/useSiteSettings";
 
 const Particle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
   <motion.div
@@ -14,13 +14,12 @@ const Particle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
   />
 );
 
-const HeroSection = () => {
+const HeroSection = ({ settings }: { settings: SiteSettings }) => {
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; delay: number }[]>([]);
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [type, setType] = useState("");
   const navigate = useNavigate();
-  const { settings } = useSiteSettings();
   const { t, lang } = useLanguage();
 
   const stats = [

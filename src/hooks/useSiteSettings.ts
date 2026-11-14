@@ -34,7 +34,7 @@ export function useSiteSettings() {
       const { data } = await supabase.from("site_settings").select("key, value");
       if (data) {
         const map: Record<string, string> = {};
-        data.forEach((row: any) => { map[row.key] = row.value || ""; });
+        data.forEach((row) => { map[row.key] = row.value || ""; });
         setSettings((prev) => ({ ...prev, ...map }));
       }
       setLoading(false);

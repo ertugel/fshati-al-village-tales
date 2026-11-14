@@ -46,7 +46,7 @@ const Index = () => {
         jsonLd={jsonLd}
       />
       <Navbar />
-      <HeroSection />
+      <HeroSection settings={settings} />
       <CategoryStrip />
       <DestinationsGrid />
       <ToursSection />
